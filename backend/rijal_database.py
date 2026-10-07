@@ -1,0 +1,723 @@
+"""
+Biographical Database for Ilm ar-Rijal (علم الرجال والجرح والتعديل)
+Provides historical metadata, reliability ratings, memory metrics, and scholarly evaluations.
+"""
+from typing import Dict, Any
+
+RIJAL_DATABASE: Dict[str, Dict[str, Any]] = {
+    # ------------------ SAHABAH (الصحابة) ------------------
+    "prophet_muhammad": {
+        "id": "prophet_muhammad",
+        "name_ar": "رسول الله محمد ﷺ",
+        "name_en": "Prophet Muhammad ﷺ",
+        "name_ur": "رسول اللہ محمد مصطفیٰ ﷺ",
+        "generation": "Prophet",
+        "generation_ar": "النبي المصطفى ﷺ",
+        "generation_ur": "نبی آخر الزماں ﷺ",
+        "death_hijri": 11,
+        "city": "Madinah al-Munawwarah",
+        "reliability_tier": "prophetic_source",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "The final Messenger of Allah, source of divine revelation and prophetic Sunnah.",
+        "notes_ar": "خاتم الأنبياء والمرسلين، مصدر الوحي والسنة النبوية المطهرة.",
+        "notes_ur": "اللہ کے آخری رسول اور تمام شریعت و سنت نبوی کے سرچشمہ۔",
+        "scholar_quotes": [
+            {"scholar": "Ijma' (الإجماع)", "quote": "Ma'sum (Infallible) in delivering the Divine Message.", "ruling": "Source"}
+        ]
+    },
+    "umar_ibn_al_khattab": {
+        "id": "umar_ibn_al_khattab",
+        "name_ar": "عمر بن الخطاب رضي الله عنه",
+        "name_en": "Umar ibn al-Khattab (RA)",
+        "name_ur": "حضرت عمر بن الخطاب رضی اللہ عنہ",
+        "generation": "Sahabi",
+        "generation_ar": "صحابي جليل - أمير المؤمنين",
+        "generation_ur": "جلیل القدر صحابی - امیر المومنین",
+        "death_hijri": 23,
+        "city": "Madinah",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Second Rightly Guided Caliph. Companions are upright ('udul) by consensus of Ahl al-Sunnah.",
+        "notes_ar": "الخليفة الراشد الثاني، الصحابة كلهم عدول بتعديل الله تعالى لهم في القرآن العظيم.",
+        "notes_ur": "خلیفہ راشد ثانی۔ اہل السنت کے اجماع کے مطابق تمام صحابہ عادل ہیں۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Hajar", "quote": "All Sahabah are just and upright without investigation required.", "ruling": "Sahabi 'Adl"}
+        ]
+    },
+    "abu_hurayrah": {
+        "id": "abu_hurayrah",
+        "name_ar": "أبو هريرة عبد الرحمن بن صخر الدوسي رضي الله عنه",
+        "name_en": "Abu Hurayrah (RA)",
+        "name_ur": "حضرت ابوہریرہ عبدالرحمن بن صخر دوسی رضی اللہ عنہ",
+        "generation": "Sahabi",
+        "generation_ar": "صحابي جليل - أحفظ الصحابة",
+        "generation_ur": "جلیل القدر صحابی - سب سے زیادہ احادیث یاد رکھنے والے",
+        "death_hijri": 57,
+        "city": "Madinah",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "The most prolific narrator among the Sahabah, blessed by the Prophet's du'a for retentive memory.",
+        "notes_ar": "أحفظ الصحابة للحديث النبوي، دعا له النبي ﷺ بالحفظ فما نسي حديثاً قط.",
+        "notes_ur": "صحابہ میں سب سے زیادہ روایت کرنے والے، جنہیں حضور ﷺ کی خصوصی دعا کا شرف حاصل ہوا۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Shafi'i", "quote": "Abu Hurayrah was the most retentive of narrators in his era.", "ruling": "Sahabi 'Adl"}
+        ]
+    },
+    "abdullah_ibn_umar": {
+        "id": "abdullah_ibn_umar",
+        "name_ar": "عبد الله بن عمر بن الخطاب رضي الله عنهما",
+        "name_en": "Abdullah ibn Umar (RA)",
+        "name_ur": "حضرت عبداللہ بن عمر بن الخطاب رضی اللہ عنہما",
+        "generation": "Sahabi",
+        "generation_ar": "صحابي جليل - فقيه المدينة",
+        "generation_ur": "جلیل القدر صحابی و فقیہ مدینہ",
+        "death_hijri": 73,
+        "city": "Madinah",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Renowned for meticulous adherence to prophetic footsteps and deep legal insight.",
+        "notes_ar": "من المكثرين في الرواية وشديد الاتباع لآثار النبي ﷺ.",
+        "notes_ur": "سنت رسول ﷺ کی ہو بہو پیروی اور کثرت روایت میں ممتاز۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Dhahabi", "quote": "Imam, Qudwah, Shaykh al-Islam.", "ruling": "Sahabi 'Adl"}
+        ]
+    },
+    "anas_ibn_malik": {
+        "id": "anas_ibn_malik",
+        "name_ar": "أنس بن مالك الأنصاري رضي الله عنه",
+        "name_en": "Anas ibn Malik (RA)",
+        "name_ur": "حضرت انس بن مالک انصاری رضی اللہ عنہ",
+        "generation": "Sahabi",
+        "generation_ar": "صحابي جليل - خادم رسول الله ﷺ",
+        "generation_ur": "خادمِ خاص رسول اللہ ﷺ",
+        "death_hijri": 93,
+        "city": "Basra",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Served the Prophet ﷺ for 10 years in Madinah, prolific and trustworthy narrator.",
+        "notes_ar": "خادم النبي ﷺ لعشر سنين، من المكثرين من الرواية المعمرين.",
+        "notes_ur": "دس سال تک رسول اکرم ﷺ کی خدمت بابرکت میں رہنے والے جلیل القدر صحابی۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Abd al-Barr", "quote": "Preeminent Sahabi with pristine uprightness.", "ruling": "Sahabi 'Adl"}
+        ]
+    },
+    "aisha_bint_abi_bakr": {
+        "id": "aisha_bint_abi_bakr",
+        "name_ar": "عائشة بنت أبي بكر الصديق رضي الله عنهما",
+        "name_en": "Aisha bint Abi Bakr (RA)",
+        "name_ur": "ام المومنین حضرت عائشہ صدیقہ رضی اللہ عنہا",
+        "generation": "Sahabi",
+        "generation_ar": "أم المؤمنين - أفقه نساء الأمة",
+        "generation_ur": "ام المؤمنین - امت کی سب سے بڑی فقیہہ",
+        "death_hijri": 58,
+        "city": "Madinah",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Mother of the Believers, profound jurist and narrator of personal and legal prophetic guidance.",
+        "notes_ar": "أم المؤمنين، فقيهة الأمة ومفسرتها الأولى، روت علماً جماً.",
+        "notes_ur": "ام المومنین، علم و فقہ کی بے مثال بحرِ زخار۔",
+        "scholar_quotes": [
+            {"scholar": "Urwah ibn al-Zubayr", "quote": "I have not seen anyone more knowledgeable in Sunnah and jurisprudence than Aisha.", "ruling": "Sahabi 'Adl"}
+        ]
+    },
+
+    # ------------------ TABI'IN (التابعون) ------------------
+    "nafi_mawla_ibn_umar": {
+        "id": "nafi_mawla_ibn_umar",
+        "name_ar": "نافع مولى ابن عمر",
+        "name_en": "Nafi' Mawla Ibn Umar",
+        "name_ur": "نافع مولیٰ ابن عمر",
+        "generation": "Wusta al-Tabi'in",
+        "generation_ar": "الطبقة الثالثة - الوسطى من التابعين",
+        "generation_ur": "وسطیٰ تابعین میں سے",
+        "death_hijri": 117,
+        "city": "Madinah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Key link in the 'Golden Chain' (Silsilat al-Dhahab: Malik from Nafi' from Ibn Umar). Supreme precision.",
+        "notes_ar": "ركن سلسلة الذهب (مالك عن نافع عن ابن عمر)، إمام في التثبت والضبط التام.",
+        "notes_ur": "سلسلہ الذہب (سونے کی زنجیر) کی مرکزی کڑی، ثقہ ثبت اور اعلیٰ ترین حافظ۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Bukhari", "quote": "The most authentic chain of all is: Malik, from Nafi', from Ibn Umar.", "ruling": "Asahh al-Asanid"}
+        ]
+    },
+    "al_zuhri": {
+        "id": "al_zuhri",
+        "name_ar": "ابن شهاب الزهري (محمد بن مسلم)",
+        "name_en": "Ibn Shihab al-Zuhri",
+        "name_ur": "ابن شہاب الزہری (محمد بن مسلم)",
+        "generation": "Sughra al-Tabi'in",
+        "generation_ar": "صغار التابعين - جامع السنة النبوية",
+        "generation_ur": "صغار تابعین - مدونِ اول سنت نبوی",
+        "death_hijri": 124,
+        "city": "Madinah / Sham",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": True,
+        "mudallis_tier": 2,  # Rare/acceptable tadlis, admitted when explicit
+        "notes_en": "The pioneering codifier of the Hadith corpus. Renowned for immense memory. Level 2 Mudallis (tadlis irsal, rarely affects chains).",
+        "notes_ar": "أول من دوّن الحديث بأمر عمر بن عبد العزيز، حافظ الدنيا وإمام الحجاز والشام.",
+        "notes_ur": "حدیث نبوی کے پہلے باقاعدہ مدوّن، علم حدیث کے عظیم ترین امام۔",
+        "scholar_quotes": [
+            {"scholar": "Ahmad ibn Hanbal", "quote": "Al-Zuhri is the best in Hadith and the most knowledgeable in chains.", "ruling": "Thiqah Hafiz Thabat"}
+        ]
+    },
+    "alqamah_ibn_waqqas": {
+        "id": "alqamah_ibn_waqqas",
+        "name_ar": "علقمة بن وقاص الليثي",
+        "name_en": "Alqamah ibn Waqqas al-Laythi",
+        "name_ur": "علقمہ بن وقاص اللیثی",
+        "generation": "Kibar al-Tabi'in",
+        "generation_ar": "كبار التابعين",
+        "generation_ur": "کبار تابعین",
+        "death_hijri": 85,
+        "city": "Madinah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Sole primary transmitter of the Hadith of Intention from Umar ibn al-Khattab. Unanimously declared Thiqah Thabat.",
+        "notes_ar": "راوي حديث 'إنما الأعمال بالنيات' عن عمر بن الخطاب، ثقة ثبت متفق عليه.",
+        "notes_ur": "حضرت عمر فاروق سے حدیث نیت کے راوی، تمام ائمہ کے نزدیک ثقہ و عادل۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Hajar", "quote": "Thiqah Thabat.", "ruling": "Thiqah Thabat"}
+        ]
+    },
+    "muhammad_ibn_ibrahim_al_taymi": {
+        "id": "muhammad_ibn_ibrahim_al_taymi",
+        "name_ar": "محمد بن إبراهيم التيمي",
+        "name_en": "Muhammad ibn Ibrahim al-Taymi",
+        "name_ur": "محمد بن ابراہیم التیمی",
+        "generation": "Wusta al-Tabi'in",
+        "generation_ar": "الوسطى من التابعين",
+        "generation_ur": "وسطیٰ تابعین",
+        "death_hijri": 120,
+        "city": "Madinah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 96,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Sole transmitter from Alqamah in the Hadith of Intentions. Universally acclaimed Thiqah.",
+        "notes_ar": "الراوي عن علقمة بن وقاص، ثقة جليل ثبت.",
+        "notes_ur": "علقمہ بن وقاص سے حدیث نیت کے واحد راوی، ثقہ و معتمد۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Sa'd", "quote": "He was trustworthy and had many authentic hadiths.", "ruling": "Thiqah"}
+        ]
+    },
+    "yahya_ibn_said_al_ansari": {
+        "id": "yahya_ibn_said_al_ansari",
+        "name_ar": "يحيى بن سعيد الأنصاري",
+        "name_en": "Yahya ibn Sa'id al-Ansari",
+        "name_ur": "یحییٰ بن سعید الانصاری",
+        "generation": "Sughra al-Tabi'in",
+        "generation_ar": "صغار التابعين - قاضي المدينة",
+        "generation_ur": "صغار تابعین - قاضی مدینہ",
+        "death_hijri": 143,
+        "city": "Madinah / Kufa",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Judge of Madinah, sole link from Muhammad ibn Ibrahim from whom over 200 scholars branched the Hadith of Intentions.",
+        "notes_ar": "قاضي المدينة، عنه انتشر حديث النيات ورواه عنه أكثر من مائتي راوٍ ثقة.",
+        "notes_ur": "مدینہ منورہ کے قاضی، جن سے حدیث نیت 200 سے زائد ائمہ نے روایت کی۔",
+        "scholar_quotes": [
+            {"scholar": "Ali ibn al-Madini", "quote": "The axes of isnad revolve upon six, Yahya ibn Sa'id is among the greatest.", "ruling": "Thiqah Thabat"}
+        ]
+    },
+
+    # ------------------ ATBA' AL-TABI'IN & IMAMS (أتباع التابعين والأئمة) ------------------
+    "malik_ibn_anas": {
+        "id": "malik_ibn_anas",
+        "name_ar": "الإمام مالك بن أنس",
+        "name_en": "Imam Malik ibn Anas",
+        "name_ur": "امام مالک بن انس",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "إمام دار الهجرة - صاحب الموطأ",
+        "generation_ur": "امام دار الہجرہ - مصنف موطا",
+        "death_hijri": 179,
+        "city": "Madinah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Imam Dar al-Hijrah, author of Al-Muwatta. The ultimate gold standard of narrator screening.",
+        "notes_ar": "إمام دار الهجرة ونجم العلماء، شديد التحري في الرواية لا يروي إلا عن ثقة ثبت.",
+        "notes_ur": "امام دار الہجرہ، روات کی پرکھ میں انتہائی محتاط اور سخت معیار رکھنے والے۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Shafi'i", "quote": "When the scholars are mentioned, Malik is the shining star.", "ruling": "Imam Thiqah"}
+        ]
+    },
+    "sufyan_ibn_uyaynah": {
+        "id": "sufyan_ibn_uyaynah",
+        "name_ar": "سفيان بن عيينة الهلالي",
+        "name_en": "Sufyan ibn Uyaynah",
+        "name_ur": "سفیان بن عیینہ ہلالی",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "إمام أهل مكة والحرم",
+        "generation_ur": "امام اہل مکہ",
+        "death_hijri": 198,
+        "city": "Makkah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": True,
+        "mudallis_tier": 1,  # First tier: Rarely practised tadlis, only from trustworthy
+        "notes_en": "Imam of Makkah, prominent teacher of Al-Shafi'i and Ahmad. High-level precision.",
+        "notes_ar": "إمام الحرم المكي، حافظ ثقة ثبت، دلس نادراً عن الثقات.",
+        "notes_ur": "مکہ مکرمہ کے عظیم محدث اور حافظ حدیث، ثقہ ثبت۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Shafi'i", "quote": "Were it not for Malik and Sufyan, knowledge would have vanished from Hijaz.", "ruling": "Thiqah Hafiz"}
+        ]
+    },
+    "al_humaydi": {
+        "id": "al_humaydi",
+        "name_ar": "عبد الله بن الزبير الحميدي",
+        "name_en": "Al-Humaydi (Abdullah ibn al-Zubayr)",
+        "name_ur": "عبداللہ بن زبیر الحمیدی",
+        "generation": "Atba' Atba' al-Tabi'in",
+        "generation_ar": "شيخ البخاري ومصنف المسند",
+        "generation_ur": "شیخ البخاری و مصنف مسند",
+        "death_hijri": 219,
+        "city": "Makkah",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Leading Shaykh of Imam Al-Bukhari, compiler of Musnad al-Humaydi. First narrator in Sahih al-Bukhari.",
+        "notes_ar": "شيخ البخاري الذي افتتح به صحيحه، إمام حافظ متقن من كبار أهل السنة.",
+        "notes_ur": "امام بخاری کے جلیل القدر استاذ جن سے صحیح بخاری کی پہلی حدیث مروی ہے۔",
+        "scholar_quotes": [
+            {"scholar": "Ahmad ibn Hanbal", "quote": "Al-Humaydi is an Imam in our view.", "ruling": "Thiqah Imam"}
+        ]
+    },
+    "al_bukhari": {
+        "id": "al_bukhari",
+        "name_ar": "الإمام محمد بن إسماعيل البخاري",
+        "name_en": "Imam Muhammad ibn Isma'il al-Bukhari",
+        "name_ur": "امام محمد بن اسماعیل بخاری",
+        "generation": "A'immat al-Hadith",
+        "generation_ar": "أمير المؤمنين في الحديث",
+        "generation_ur": "امیر المومنین فی الحدیث",
+        "death_hijri": 256,
+        "city": "Bukhara / Nishapur",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "The leader of the Hadith masters. His Sahih is the most authentic book after the Qur'an.",
+        "notes_ar": "أمير المؤمنين في الحديث وصاحب أصح كتاب بعد كتاب الله تعالى.",
+        "notes_ur": "حدیث کے امام اعظم، جن کی صحیح کتاب اللہ کے بعد سب سے معتبر کتاب ہے۔",
+        "scholar_quotes": [
+            {"scholar": "Muslim ibn al-Hajjaj", "quote": "I testify that there is no one like you in this world.", "ruling": "Amir al-Mu'minin"}
+        ]
+    },
+    "muslim_ibn_al_hajjaj": {
+        "id": "muslim_ibn_al_hajjaj",
+        "name_ar": "الإمام مسلم بن الحجاج النيسابوري",
+        "name_en": "Imam Muslim ibn al-Hajjaj",
+        "name_ur": "امام مسلم بن الحجاج نیشاپوری",
+        "generation": "A'immat al-Hadith",
+        "generation_ar": "صاحب الصحيح الثاني",
+        "generation_ur": "صحیح مسلم کے جامع و امام",
+        "death_hijri": 261,
+        "city": "Nishapur",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Author of Sahih Muslim. Renowned for systemic compilation and isnad organization.",
+        "notes_ar": "إمام المحدثين صاحب الجامع الصحيح المتقن في ترتيب الأسانيد وطرقها.",
+        "notes_ur": "صحیح مسلم کے مؤلف اور حسن ترتیب و جمع اسانید کے بے نظیر امام۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Abi Hatim", "quote": "Muslim was a trustworthy memorizer of hadith.", "ruling": "Thiqah Hafiz"}
+        ]
+    },
+    "al_tirmidhi": {
+        "id": "al_tirmidhi",
+        "name_ar": "الإمام أبو عيسى محمد بن عيسى الترمذي",
+        "name_en": "Imam Abu Isa al-Tirmidhi",
+        "name_ur": "امام ابو عیسیٰ محمد بن عیسیٰ ترمذی",
+        "generation": "A'immat al-Hadith",
+        "generation_ar": "صاحب السنن والشمائل",
+        "generation_ur": "جامع ترمذی کے مصنف",
+        "death_hijri": 279,
+        "city": "Termez",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Author of Sunan al-Tirmidhi (Al-Jami'). Formalized the terminology of Hasan Hadith and Ilal.",
+        "notes_ar": "صاحب الجامع السنن ومحرر مصطلح الحديث 'حسن صحيح' والعلل.",
+        "notes_ur": "حدیث میں 'حسن' اور 'صحیح' کی اصطلاحات کو مدون و منضبط کرنے والے عظیم امام۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Hibban", "quote": "He was among those who collected, memorized, and authored.", "ruling": "Thiqah Hafiz"}
+        ]
+    },
+
+    # ------------------ PROBLEMATIC & WEAK NARRATORS (الرواة الضعفاء والمتروكون) ------------------
+    "abu_atikah": {
+        "id": "abu_atikah",
+        "name_ar": "أبو عاتكة طريف بن سلمان (أو سليمان)",
+        "name_en": "Abu Atikah (Tarif ibn Salman)",
+        "name_ur": "ابو عاتکہ طریف بن سلمان",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "متروك الحديث ومنكر الرواية",
+        "generation_ur": "متروک الحدیث اور منکر روایات کا راوی",
+        "death_hijri": 160,
+        "city": "Basra",
+        "reliability_tier": "matruk",
+        "integrity_score": 15,
+        "memory_score": 10,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Transmitted the fabricated hadith 'Seek knowledge even if in China' from Anas ibn Malik. Categorized as Matruk (abandoned) or liar.",
+        "notes_ar": "راوي حديث 'اطلبوا العلم ولو بالصين' عن أنس. أجمع النقاد على ضعفه الشديد وتركه.",
+        "notes_ur": "'علم حاصل کرو خواہ چین جانا پڑے' کی بے اصل روایت کا راوی، محدثین کے نزدیک متروک ہے۔",
+        "scholar_quotes": [
+            {"scholar": "Abu Hatim al-Razi", "quote": "Dhahib al-Hadith (Discarded in Hadith).", "ruling": "Matruk"},
+            {"scholar": "Al-Bukhari", "quote": "Munkar al-Hadith.", "ruling": "Munkar"},
+            {"scholar": "Al-Nasa'i", "quote": "Laysa bi-thiqah (Not trustworthy).", "ruling": "Da'if Jiddan"}
+        ]
+    },
+    "habib_ibn_abi_habib": {
+        "id": "habib_ibn_abi_habib",
+        "name_ar": "حبيب بن أبي حبيب (أبو محمد المروزي)",
+        "name_en": "Habib ibn Abi Habib al-Marwazi",
+        "name_ur": "حبیب بن ابی حبیب المروزی",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "كذاب وضاع للحديث",
+        "generation_ur": "کذاب اور حدیث گھڑنے والا",
+        "death_hijri": 170,
+        "city": "Marw",
+        "reliability_tier": "kadhdhab",
+        "integrity_score": 0,
+        "memory_score": 5,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Known fabricator. Fabricated chains and attributed false sayings to Malik and trustworthy scholars.",
+        "notes_ar": "وضاع كذاب، يركب الأسانيد ويضع الحديث على الإمام مالك والثقات.",
+        "notes_ur": "جھوٹا اور احادیث وضع کرنے والا راوی، ائمہ نے اس کی روایات کو باطل قرار دیا۔",
+        "scholar_quotes": [
+            {"scholar": "Abu Dawud", "quote": "He used to fabricate hadiths.", "ruling": "Kadhdhab Wadda'"},
+            {"scholar": "Ibn Hibban", "quote": "He would fabricate reports and claim hearing from Malik.", "ruling": "Mawdu'"}
+        ]
+    },
+    "umar_ibn_shakir": {
+        "id": "umar_ibn_shakir",
+        "name_ar": "عمر بن شاكر البصري",
+        "name_en": "Umar ibn Shakir al-Basri",
+        "name_ur": "عمر بن شاکر بصری",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "ضعيف الحديث كثير المناكير",
+        "generation_ur": "ضعیف اور منکر روایات بیان کرنے والا",
+        "death_hijri": 175,
+        "city": "Basra",
+        "reliability_tier": "daif",
+        "integrity_score": 45,
+        "memory_score": 30,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Narrates solo anomalous reports from Anas ibn Malik. Weak memory and rejected solitary chains.",
+        "notes_ar": "يروي عن أنس مناكير لا يتابع عليها، ضعفه البخاري وأبو حاتم.",
+        "notes_ur": "حضرت انس رضی اللہ عنہ سے غیر معتبر اور منکر احادیث روایت کرتا تھا۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Bukhari", "quote": "Munkar al-Hadith, narrates strange reports from Anas.", "ruling": "Da'if"},
+            {"scholar": "Ibn Hajar", "quote": "Da'if, errs frequently.", "ruling": "Da'if"}
+        ]
+    },
+    "abdullah_ibn_lahiah": {
+        "id": "abdullah_ibn_lahiah",
+        "name_ar": "عبد الله بن لهيعة الحضرمي",
+        "name_en": "Abdullah ibn Lahi'ah",
+        "name_ur": "عبداللہ بن لہیعہ حضرمی",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "قاضي مصر - احترقت كتبه",
+        "generation_ur": "قاضی مصر - کتب جل جانے کی وجہ سے کمزور حافظہ",
+        "death_hijri": 174,
+        "city": "Egypt",
+        "reliability_tier": "saduq_yahim",
+        "integrity_score": 75,
+        "memory_score": 45,
+        "is_mudallis": True,
+        "mudallis_tier": 3,
+        "notes_en": "Righteous judge of Egypt, but his books burned in 170H leading to corrupted memory. Reports before fire are Hasan, after are Da'if.",
+        "notes_ar": "قاضي مصر، عالم صالح في نفسه لكن احترقت كتبه فخلط في حفظه، رواية العبادلة عنه أصح.",
+        "notes_ur": "نیک سیرت اور متقی قاضی مگر کتب جل جانے کے بعد یادداشت میں غلطیاں پیدا ہوئیں۔",
+        "scholar_quotes": [
+            {"scholar": "Ahmad ibn Hanbal", "quote": "His reports before the fire are sounder than after.", "ruling": "Mukhtalat / Da'if"}
+        ]
+    },
+    "al_amash": {
+        "id": "al_amash",
+        "name_ar": "سليمان بن مهران الأعمش",
+        "name_en": "Sulayman ibn Mihran al-A'mash",
+        "name_ur": "سلیمان بن مہران اعمش",
+        "generation": "Wusta al-Tabi'in",
+        "generation_ar": "شيخ المقرئين والمحدثين بالكوفة",
+        "generation_ur": "کوفہ کے جلیل القدر محدث",
+        "death_hijri": 148,
+        "city": "Kufa",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 96,
+        "is_mudallis": True,
+        "mudallis_tier": 2,
+        "notes_en": "Pillar of Hadith in Kufa. Thiqah Hafiz, but known for Tadlis. His 'An'anah requires scrutiny outside Sahih collections.",
+        "notes_ar": "إمام ثقة ثبت، لكنه موصوف بالتدليس من المرتبة الثانية، يُتوقف في عنعنته إذا انفرد.",
+        "notes_ur": "کوفہ کے جلیل القدر امام، ثقہ حافظ مگر تدلیس میں شمار، عنعنہ کی صورت میں تحقیق ضروری ہے۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Hajar", "quote": "Thiqah Hafiz, famously known for Tadlis.", "ruling": "Mudallis Rank 2"}
+        ]
+    },
+    "abu_dawud": {
+        "id": "abu_dawud",
+        "name_ar": "سليمان بن الأشعث أبو داود السجستاني",
+        "name_en": "Abu Dawud al-Sijistani",
+        "name_ur": "امام ابو داؤد سجستانی رحمہ اللہ",
+        "generation": "Collector",
+        "generation_ar": "إمام أهل الحديث وصاحب السنن",
+        "generation_ur": "محدث کبیر اور صاحب سنن",
+        "death_hijri": 275,
+        "city": "Basra / Sijistan",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 99,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Author of the canonical Sunan Abi Dawud. Master of legal Hadiths and jurisprudence.",
+        "notes_ar": "صاحب كتاب السنن المشهور، أحد كبار أئمة الإسلام وحفاظ الحديث.",
+        "notes_ur": "سنن ابی داؤد کے مؤلف اور فقہ الحدیث کے عظیم امام۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Hakim", "quote": "Abu Dawud was the leading Imam of Hadith scholars in his era.", "ruling": "Imam / Thiqah Thabt"}
+        ]
+    },
+    "al_nasai": {
+        "id": "al_nasai",
+        "name_ar": "أحمد بن شعيب النسائي",
+        "name_en": "Ahmad ibn Shu'ayb an-Nasa'i",
+        "name_ur": "امام احمد بن شعیب نسائی رحمہ اللہ",
+        "generation": "Collector",
+        "generation_ar": "إمام عصره في علل الحديث",
+        "generation_ur": "محدث کبیر اور علل حدیث کے ماہر",
+        "death_hijri": 303,
+        "city": "Khurasan / Egypt",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 99,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Author of Sunan an-Nasa'i (al-Mujtaba). Celebrated for strict conditions in narrator authentication.",
+        "notes_ar": "صاحب السنن الصغرى والكبرى، شديد التدقيق والشرط في الرجال والعلل.",
+        "notes_ur": "سنن نسائی کے مؤلف اور روات کے سخت ناقد۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Daraqutni", "quote": "An-Nasa'i was foremost among Hadith scholars of his time.", "ruling": "Imam / Thiqah Thabt"}
+        ]
+    },
+    "ibn_majah": {
+        "id": "ibn_majah",
+        "name_ar": "محمد بن يزيد بن ماجه القزويني",
+        "name_en": "Ibn Majah al-Qazwini",
+        "name_ur": "امام ابن ماجہ قزوینی رحمہ اللہ",
+        "generation": "Collector",
+        "generation_ar": "صاحب كتاب السنن",
+        "generation_ur": "سنن ابن ماجہ کے مصنف",
+        "death_hijri": 273,
+        "city": "Qazwin",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Author of Sunan Ibn Majah, completed the canonical Kutub al-Sittah.",
+        "notes_ar": "صاحب كتاب السنن، إمام حافظ مفسر مؤرخ.",
+        "notes_ur": "کتب ستہ کی چھٹی کتاب سنن ابن ماجہ کے مصنف۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Kathir", "quote": "Ibn Majah was a prominent Hafiz and knowledgeable author.", "ruling": "Thiqah Hafiz"}
+        ]
+    },
+    "ahmad_ibn_hanbal": {
+        "id": "ahmad_ibn_hanbal",
+        "name_ar": "أحمد بن محمد بن حنبل الشيباني",
+        "name_en": "Ahmad ibn Hanbal",
+        "name_ur": "امام احمد بن حنبل رحمہ اللہ",
+        "generation": "Collector",
+        "generation_ar": "إمام أهل السنة والجماعة",
+        "generation_ur": "امام اہل السنت اور محدث اعظم",
+        "death_hijri": 241,
+        "city": "Baghdad",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Imam of Ahl al-Sunnah, memorizer of over 1 million narrations, compiler of Musnad Ahmad.",
+        "notes_ar": "إمام أهل السنة، حافظ المشرق والمغرب، صاحب المسند العظيم.",
+        "notes_ur": "امام اہل السنت، لاکھوں احادیث کے حافظ اور مسند احمد کے مؤلف۔",
+        "scholar_quotes": [
+            {"scholar": "Al-Shafi'i", "quote": "I left Baghdad and did not leave behind anyone more knowledgeable or pious than Ahmad.", "ruling": "Imam al-Sunnah"}
+        ]
+    },
+    "shubah": {
+        "id": "shubah",
+        "name_ar": "شعبة بن الحجاج العتكي",
+        "name_en": "Shu'bah ibn al-Hajjaj",
+        "name_ur": "شعبہ بن حجاج رحمہ اللہ",
+        "generation": "Kibar al-Tabi'in",
+        "generation_ar": "أمير المؤمنين في الحديث",
+        "generation_ur": "امیر المومنین فی الحدیث",
+        "death_hijri": 160,
+        "city": "Basra",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Amir al-Mu'minin fi al-Hadith. Pioneer of Jarh wa Ta'dil criticism.",
+        "notes_ar": "أمير المؤمنين في الحديث، أول من فتش عن الرجال وتشدد في الجرح والتعديل بالبصرة.",
+        "notes_ur": "علم الرجال اور جرح و تعدیل کے اولین امام، امیر المومنین فی الحدیث۔",
+        "scholar_quotes": [
+            {"scholar": "Sufyan al-Thawri", "quote": "Shu'bah is Amir al-Mu'minin in Hadith.", "ruling": "Amir al-Mu'minin"}
+        ]
+    },
+    "qatadah": {
+        "id": "qatadah",
+        "name_ar": "قتادة بن دعامة السدوسي",
+        "name_en": "Qatadah ibn Di'amah",
+        "name_ur": "قتادہ بن دعامہ سدوسی",
+        "generation": "Wusta al-Tabi'in",
+        "generation_ar": "حافظ البصرة ومفسرها",
+        "generation_ur": "بصرہ کے عظیم حافظ اور مفسر",
+        "death_hijri": 117,
+        "city": "Basra",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 98,
+        "is_mudallis": True,
+        "mudallis_tier": 2,
+        "notes_en": "Prodigious photographic memory. Known for occasional Tadlis in Basra.",
+        "notes_ar": "أحفظ أهل زمانه، ثقة ثبت لكنه موصوف بالتدليس.",
+        "notes_ur": "بے مثال حافظہ، ثقہ ثبت مگر تدلیس میں معروف۔",
+        "scholar_quotes": [
+            {"scholar": "Ahmad ibn Hanbal", "quote": "Qatadah was the most retentive scholar of Basra.", "ruling": "Thiqah Hafiz / Mudallis Rank 2"}
+        ]
+    },
+    "musaddad": {
+        "id": "musaddad",
+        "name_ar": "مسدد بن مسرهد الأسدي",
+        "name_en": "Musaddad ibn Musarhad",
+        "name_ur": "مسدد بن مسرہد اسدی",
+        "generation": "Atba' al-Tabi'in",
+        "generation_ar": "شيخ البخاري وأبي داود",
+        "generation_ur": "امام بخاری اور ابو داؤد کے استاد",
+        "death_hijri": 228,
+        "city": "Basra",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 99,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Major shaykh of Al-Bukhari and Abu Dawud. Pillar of Hadith in Basra.",
+        "notes_ar": "ثقة حافظ حجة، من كبار شيوخ البخاري وأبي داود.",
+        "notes_ur": "امام بخاری کے شیخ اور بصرہ کے ثقہ حافظ۔",
+        "scholar_quotes": [
+            {"scholar": "Ibn Ma'in", "quote": "Musaddad is reliable, reliable (Thiqah Thiqah).", "ruling": "Thiqah Thabt"}
+        ]
+    },
+    "waki": {
+        "id": "waki",
+        "name_ar": "وكيع بن الجراح الرؤاسي",
+        "name_en": "Waki' ibn al-Jarrah",
+        "name_ur": "وکیع بن جراح رحمہ اللہ",
+        "generation": "Kibar Atba' al-Tabi'in",
+        "generation_ar": "إمام العراق وشيخ الشافعي وأحمد",
+        "generation_ur": "عراق کے جلیل القدر امام اور امام شافعی کے استاد",
+        "death_hijri": 197,
+        "city": "Kufa",
+        "reliability_tier": "thiqah_hafiz",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "Leading Hafiz of Iraq, renowned for legendary memory and piety.",
+        "notes_ar": "إمام حافظ حجة، قل أن ترى عيناك مثله في حفظه وورعه.",
+        "notes_ur": "بے مثال حافظے اور تقویٰ کے حامل کوفہ کے عظیم امام۔",
+        "scholar_quotes": [
+            {"scholar": "Ahmad ibn Hanbal", "quote": "I have not seen anyone with greater memory than Waki'.", "ruling": "Thiqah Hafiz"}
+        ]
+    },
+    "sufyan_al_thawri": {
+        "id": "sufyan_al_thawri",
+        "name_ar": "سفيان بن سعيد الثوري",
+        "name_en": "Sufyan al-Thawri",
+        "name_ur": "سفیان ثوری رحمہ اللہ",
+        "generation": "Kibar Atba' al-Tabi'in",
+        "generation_ar": "أمير المؤمنين في الحديث وإمام الكوفة",
+        "generation_ur": "امیر المومنین فی الحدیث اور کوفہ کے امام",
+        "death_hijri": 161,
+        "city": "Kufa",
+        "reliability_tier": "thiqah_thabt",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": True,
+        "mudallis_tier": 2,
+        "notes_en": "Amir al-Mu'minin fi al-Hadith. Master jurist and narrator of Kufa.",
+        "notes_ar": "أمير المؤمنين في الحديث، فقيه الأمة وعابدها، ثقة مأمون.",
+        "notes_ur": "امیر المومنین فی الحدیث اور امت کے عظیم فقیہ و محدث۔",
+        "scholar_quotes": [
+            {"scholar": "Shu'bah", "quote": "Sufyan is the leader of scholars and Amir al-Mu'minin in Hadith.", "ruling": "Amir al-Mu'minin"}
+        ]
+    },
+    "abu_bakr_al_siddiq": {
+        "id": "abu_bakr_al_siddiq",
+        "name_ar": "أبو بكر الصديق عبد الله بن أبي قحافة رضي الله عنه",
+        "name_en": "Abu Bakr al-Siddiq (RA)",
+        "name_ur": "حضرت ابوبکر صدیق رضی اللہ عنہ",
+        "generation": "Sahabi",
+        "generation_ar": "الخليفة الراشد الأول - أفضل الأمة بعد نبيها",
+        "generation_ur": "خلیفہ راشد اول - امت کے سب سے افضل انسان",
+        "death_hijri": 13,
+        "city": "Madinah",
+        "reliability_tier": "sahabi_adl",
+        "integrity_score": 100,
+        "memory_score": 100,
+        "is_mudallis": False,
+        "mudallis_tier": 0,
+        "notes_en": "First Rightly Guided Caliph, closest companion to the Prophet ﷺ. Consensus of uprightness.",
+        "notes_ar": "أول الخلفاء الراشدين وأفضل الصحابة أجمعين، عدل بنص القرآن وإجماع الأمة.",
+        "notes_ur": "خلیفہ راشد اول، امت کے افضل ترین صحابی۔",
+        "scholar_quotes": [
+            {"scholar": "Ijma'", "quote": "Best of humanity after the Prophets.", "ruling": "Sahabi 'Adl"}
+        ]
+    }
+}

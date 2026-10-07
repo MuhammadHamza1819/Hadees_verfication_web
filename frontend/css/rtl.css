@@ -1,0 +1,285 @@
+/* 
+  RTL (Right-to-Left) Stylesheet for Arabic and Urdu
+  Optimized for full responsiveness, crisp typography, and zero layout overflow.
+*/
+
+[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] body {
+  font-family: var(--font-ar);
+}
+
+/* =========================================================
+   URDU TYPOGRAPHY & RESPONSIVE SCALING
+   ========================================================= */
+
+[dir="rtl"][data-lang="ur"] body {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Amiri', Arial, sans-serif;
+  line-height: 1.6;
+}
+
+/* Authentic Nastaliq for Hadith text, translations, quotes, and primary headings */
+[data-lang="ur"] .urdu-text,
+[data-lang="ur"] .matn-translation-text,
+[data-lang="ur"] .urdu-content,
+[data-lang="ur"] .hero-banner h2,
+[data-lang="ur"] .verdict-title span:first-child,
+[data-lang="ur"] .hadith-corpus-card h4,
+[data-lang="ur"] .footer-quote {
+  font-family: var(--font-ur);
+  line-height: 1.85;
+  letter-spacing: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* UI Elements in Urdu: Compact, responsive sizing that never breaks flex containers */
+[data-lang="ur"] .nav-tab-btn {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 0.4rem 0.75rem;
+  white-space: nowrap;
+}
+
+[data-lang="ur"] .btn-primary {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 0.7rem 1.25rem;
+}
+
+[data-lang="ur"] .card-title {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+[data-lang="ur"] .form-label,
+[data-lang="ur"] .preset-label {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+[data-lang="ur"] .preset-btn {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: right;
+  direction: rtl;
+}
+
+[data-lang="ur"] .rule-label-title {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* =========================================================
+   ARABIC TYPOGRAPHY ENHANCEMENTS
+   ========================================================= */
+
+[data-lang="ar"] .card-title,
+[data-lang="ar"] .verdict-title,
+[data-lang="ar"] .btn-primary,
+[data-lang="ar"] .form-label {
+  font-family: var(--font-ar);
+  line-height: 1.6;
+}
+
+[dir="rtl"] .logo-text {
+  text-align: right;
+}
+
+/* =========================================================
+   HEADER & NAVBAR RESPONSIVENESS IN RTL
+   ========================================================= */
+
+[dir="rtl"] .header-container {
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+[dir="rtl"] .nav-tabs {
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start;
+  padding: 0.25rem 0.5rem;
+}
+
+[dir="rtl"] .header-actions {
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   FORM & INPUT ALIGNMENTS FOR RTL
+   ========================================================= */
+
+[dir="rtl"] .search-input {
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .search-icon {
+  left: auto;
+  right: 0.85rem;
+}
+
+[dir="rtl"] .form-textarea,
+[dir="rtl"] .step-select,
+[dir="rtl"] .formula-select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .preset-btn {
+  text-align: right;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+
+[dir="rtl"] .preset-btn .preset-badge {
+  margin-left: 0;
+  margin-right: auto;
+  flex-shrink: 0;
+}
+
+[dir="rtl"] .rule-header-row {
+  flex-direction: row;
+}
+
+[dir="rtl"] .rule-name-group {
+  flex-direction: row;
+}
+
+[dir="rtl"] .rule-details-list li {
+  padding-left: 0;
+  padding-right: 1.2rem;
+  text-align: right;
+}
+
+[dir="rtl"] .rule-details-list li::before {
+  left: auto;
+  right: 0.2rem;
+}
+
+/* Sanad chain arrows in RTL (flowing from right to left) */
+[dir="rtl"] .link-line::after {
+  content: '<';
+  right: auto;
+  left: -5px;
+}
+
+[dir="rtl"] .sanad-chain-flow {
+  flex-direction: row;
+}
+
+/* Modal Close Button for RTL */
+[dir="rtl"] .modal-close-btn {
+  right: auto;
+  left: 1.25rem;
+}
+
+/* =========================================================
+   RESPONSIVE OVERFLOW GUARDS FOR RTL
+   ========================================================= */
+
+[dir="rtl"] * {
+  box-sizing: border-box;
+}
+
+[dir="rtl"] .header-container,
+[dir="rtl"] .verifier-layout,
+[dir="rtl"] .glass-card,
+[dir="rtl"] .chain-builder-container,
+[dir="rtl"] .app-main,
+[dir="rtl"] .tab-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+[dir="rtl"] .hero-content h2,
+[dir="rtl"] .hero-content p {
+  text-align: right;
+}
+
+[dir="rtl"] .chain-builder-actions {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chain-step-row {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+[dir="rtl"] .step-index-badge {
+  margin-left: 0.25rem;
+  margin-right: 0;
+}
+
+[dir="rtl"] .verdict-hero {
+  flex-direction: row;
+}
+
+[dir="rtl"] .verdict-badge-large {
+  text-align: right;
+}
+
+[dir="rtl"] .matn-display-box {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .matn-quote-text {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .matn-translation-text {
+  text-align: right;
+  direction: rtl;
+}
+
+/* Responsive Breakpoints for RTL */
+@media (max-width: 1200px) {
+  [dir="rtl"] .header-container {
+    flex-wrap: wrap;
+  }
+  [dir="rtl"] .nav-tabs {
+    order: 3;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  [dir="rtl"] .verifier-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .verdict-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+  [dir="rtl"] .verdict-badge-large {
+    text-align: center;
+  }
+  [dir="rtl"] .chain-step-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

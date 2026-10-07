@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hadith Verification Engine | تحقيق الأحاديث وفق قواعد المصطلح</title>
+  <meta name="description" content="State-of-the-art Islamic Hadith verification web application applying the five classical conditions of authenticity (Usul al-Hadith and Ilm ar-Rijal).">
+  
+  <!-- Google Fonts: Outfit, Inter, Amiri, Noto Nastaliq Urdu -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/rtl.css">
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="#" class="logo-brand" id="logoBrand">
+        <div class="logo-emblem">۞</div>
+        <div class="logo-text">
+          <h1 data-i18n="app_title">Hadith Verification Engine</h1>
+          <p data-i18n="app_subtitle">Rule-Based Islamic Hadith Verification System (Usul al-Hadith)</p>
+        </div>
+      </a>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-tab="tabVerifier" data-i18n="tab_verifier">🔍 Smart Verifier</button>
+        <button class="nav-tab-btn" data-tab="tabIslamicUrduBooks" data-i18n="tab_islamicurdubooks">📥 IslamicUrduBooks</button>
+        <button class="nav-tab-btn" data-tab="tabGraph" data-i18n="tab_graph">📜 Sanad Diagram</button>
+        <button class="nav-tab-btn" data-tab="tabAuditor" data-i18n="tab_auditor">⚖️ Guided Auditor</button>
+        <button class="nav-tab-btn" data-tab="tabCorpus" data-i18n="tab_corpus">📚 Hadith Library</button>
+        <button class="nav-tab-btn" data-tab="tabRijal" data-i18n="tab_rijal">👤 Biographical Directory</button>
+        <button class="nav-tab-btn" data-tab="tabRules" data-i18n="tab_rules">📖 Usul Rules Guide</button>
+      </nav>
+
+      <!-- Action Controls: Trilingual Switcher, Theme, Print -->
+      <div class="header-actions">
+        <div class="lang-selector" aria-label="Language Switcher">
+          <button class="lang-btn active" data-lang-btn="en" onclick="setLanguage('en')">EN</button>
+          <button class="lang-btn" data-lang-btn="ar" onclick="setLanguage('ar')">عربي</button>
+          <button class="lang-btn" data-lang-btn="ur" onclick="setLanguage('ur')">اردو</button>
+        </div>
+
+        <button class="theme-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">☀️</button>
+        <button class="export-btn" id="exportReportBtn" onclick="exportTahqiqReport()" title="Print / Export Tahqiq Certificate">🖨️</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="app-main">
+    
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <h2 data-i18n="hero_title">Scientific Hadith Verification by Classical Rules</h2>
+        <p data-i18n="hero_desc">
+          Verifying prophetic reports using the foundational 5 criteria of Mustalah al-Hadith: Continuity (اتصال), Moral Integrity (عدالة), Memory Precision (ضبط), Absence of Anomaly (عدم الشذوذ), and Absence of Hidden Defects (عدم العلة).
+        </p>
+        <div class="hero-badges">
+          <div class="rule-pill"><span>🔗</span> <span data-i18n="rule_1_badge">1. Chain Continuity (Ittisal)</span></div>
+          <div class="rule-pill"><span>⚖️</span> <span data-i18n="rule_2_badge">2. Moral Integrity ('Adalah)</span></div>
+          <div class="rule-pill"><span>🧠</span> <span data-i18n="rule_3_badge">3. Retentive Precision (Dabt)</span></div>
+          <div class="rule-pill"><span>🛡️</span> <span data-i18n="rule_4_badge">4. Non-Anomaly (Shudhudh)</span></div>
+          <div class="rule-pill"><span>🔍</span> <span data-i18n="rule_5_badge">5. Defect-Free ('Illah)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: Smart Verifier -->
+    <div id="tabVerifier" class="tab-panel active">
+      <div class="verifier-layout">
+        
+        <!-- Left Column: Input, Presets & Chain Builder -->
+        <div class="verifier-controls">
+          
+          <!-- Preset Benchmarks -->
+          <div class="glass-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">⚡</span>
+                <span data-i18n="presets_label">Select a Classical Benchmark Hadith:</span>
+              </div>
+            </div>
+            <div class="preset-buttons-grid" id="presetButtonsContainer"></div>
+          </div>
+
+          <!-- Chain Builder -->
+          <div class="glass-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">⛓️</span>
+                <span data-i18n="chain_builder_title">Sanad (Chain of Narrators) Flow:</span>
+              </div>
+            </div>
+
+            <div class="chain-builder-container">
+              <div class="chain-steps-list" id="chainStepsList"></div>
+              <div class="chain-builder-actions">
+                <button class="add-step-btn" onclick="addChainStep()" data-i18n="add_narrator_btn">+ Add Transmitter to Chain</button>
+              </div>
+            </div>
+
+            <!-- Custom Text Input -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="custom_input_label">Or Enter / Select Hadith Chain & Text:</label>
+              <textarea class="form-textarea arabic-text" id="hadithCustomTextInput" rows="3" data-i18n-placeholder="textarea_placeholder" placeholder="Paste Arabic text, English translation, or narrator chain here..."></textarea>
+            </div>
+
+            <button class="btn-primary" id="executeVerifyBtn" onclick="runVerification()">
+              <span>⚡</span> <span data-i18n="verify_btn">Execute Scientific Verification</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Verification Diagnostic & Results -->
+        <div class="verifier-results">
+          <div class="glass-card" id="verificationResultsCard">
+            
+            <!-- Verdict Hero -->
+            <div id="verdictHeroContainer"></div>
+
+            <!-- Matn Display Box -->
+            <div id="matnDisplayContainer"></div>
+
+            <!-- 5 Rules Audit List -->
+            <div class="card-header" style="margin-top: 1rem;">
+              <div class="card-title">
+                <span class="card-title-icon">📋</span>
+                <span data-i18n="rules_audit_heading">The 5 Pillar Rules Evaluation</span>
+              </div>
+            </div>
+            <div class="rules-audit-list" id="rulesAuditListContainer"></div>
+
+            <!-- Interactive Sanad Graph Flow -->
+            <div class="card-header" style="margin-top: 1rem;">
+              <div class="card-title">
+                <span class="card-title-icon">🌐</span>
+                <span data-i18n="tab_graph">Sanad Visualizer</span>
+              </div>
+            </div>
+            <div class="sanad-graph-wrapper" id="sanadGraphContainer"></div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB: IslamicUrduBooks.com Integration -->
+    <div id="tabIslamicUrduBooks" class="tab-panel">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-title-icon">📥</span>
+            <span data-i18n="iub_panel_title">IslamicUrduBooks.com Live Hadith Fetcher & Verifier</span>
+          </div>
+          <a href="https://www.islamicurdubooks.com" target="_blank" rel="noopener" style="color: var(--accent-gold); font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
+            <span>🌐 www.islamicurdubooks.com</span> ↗
+          </a>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;" data-i18n="iub_panel_desc">
+          Fetch authentic Hadiths directly from IslamicUrduBooks.com with complete Arabic text, Urdu translations, chapters, and narrator chains, then instantly verify them using the 5 classical Hadith rules.
+        </p>
+      </div>
+
+      <div class="verifier-layout">
+        <!-- Controls Column -->
+        <div class="glass-card">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>🔍</span> <span data-i18n="iub_fetch_heading">Fetch by Book & Hadith Number</span>
+          </h3>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="iub_select_book">Select Hadith Collection:</label>
+            <select id="iubBookSelect" class="form-textarea" style="min-height: auto; padding: 0.65rem 0.85rem;">
+              <option value="1">1. صحيح البخاري (Sahih al-Bukhari) - 7,563 Hadiths</option>
+              <option value="2">2. صحيح مسلم (Sahih Muslim) - 7,563 Hadiths</option>
+              <option value="3">3. سنن أبي داود (Sunan Abi Dawud) - 5,274 Hadiths</option>
+              <option value="4">4. سنن ابن ماجه (Sunan Ibn Majah) - 4,341 Hadiths</option>
+              <option value="5">5. سنن النسائي (Sunan an-Nasa'i) - 5,758 Hadiths</option>
+              <option value="6">6. جامع الترمذي (Jami' at-Tirmidhi) - 3,956 Hadiths</option>
+              <option value="7">7. مشكاة المصابيح (Mishkat al-Masabih) - 6,294 Hadiths</option>
+              <option value="8">8. مسند أحمد (Musnad Ahmad) - 27,647 Hadiths</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="iub_hadith_num">Hadith Number:</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="number" id="iubHadithNumInput" class="form-textarea" style="min-height: auto; padding: 0.65rem 0.85rem;" value="1" min="1" max="30000" placeholder="e.g. 1, 13, 45, 224">
+              <button class="btn-primary" style="width: auto; padding: 0.65rem 1.4rem; white-space: nowrap;" id="iubFetchBtn" onclick="fetchFromIslamicUrduBooks()">
+                <span id="iubFetchSpinner" style="display: none;">⏳</span>
+                <span data-i18n="iub_fetch_btn">Fetch Hadith</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Quick Chips -->
+          <div style="margin-bottom: 1.25rem;">
+            <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;" data-i18n="iub_quick_samples">Quick Benchmarks:</span>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(1, 1)">Bukhari #1 (Niyyah)</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(1, 13)">Bukhari #13 (Faith)</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(2, 1)">Muslim #1 (Jibril)</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(3, 1)">Abu Dawud #1</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(4, 1)">Tirmidhi #1</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(5, 1)">Nasai #1</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(6, 1)">Ibn Majah #1</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(7, 1)">Muwatta Malik #1</button>
+              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(8, 1)">40 Nawawi #1</button>
+            </div>
+          </div>
+
+          <!-- Documentation Accordion / Box -->
+          <div style="background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem;">
+            <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 0.45rem;">
+              💡 How to Extract Data from IslamicUrduBooks.com:
+            </h4>
+            <ul style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem;">
+              <li><strong>URL Pattern:</strong> <code>https://islamicurdubooks.com/hadith/hadith-.php?bookid={id}&hadith_number={no}</code></li>
+              <li><strong>Scraper Tool:</strong> Run our script in terminal: <code>python scraper_islamicurdubooks.py --book 1 --start 1 --end 10</code></li>
+              <li><strong>REST API:</strong> Call <code>/api/islamicurdubooks/fetch?book_id=1&hadith_number=1</code></li>
+              <li><strong>Narrator IDs:</strong> Rawi links use <code>rawy-details.php?rawyid={id}</code> for Ilm ar-Rijal biographies.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Preview & Verification Column -->
+        <div class="glass-card" id="iubResultContainer">
+          <div id="iubPlaceholder" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📖</div>
+            <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;" data-i18n="iub_placeholder_title">No Hadith Selected Yet</h4>
+            <p style="font-size: 0.88rem; max-width: 380px; margin: 0 auto;" data-i18n="iub_placeholder_desc">Select a book and Hadith number on the left and click "Fetch Hadith" to view the Arabic text, Urdu translation, and narrators.</p>
+          </div>
+
+          <div id="iubContentCard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <span class="preset-badge sahih" id="iubBookBadge">Sahih al-Bukhari</span>
+              <span style="font-size: 0.82rem; color: var(--text-gold); font-weight: 600;" id="iubHadithNoBadge">Hadith #1</span>
+            </div>
+
+            <div style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;" id="iubChapterInfo"></div>
+
+            <!-- Arabic Text -->
+            <div class="matn-display-box" style="margin-bottom: 1rem;">
+              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-emerald); margin-bottom: 0.4rem; font-weight: 700;">Arabic Matn & Sanad:</div>
+              <div class="arabic-text" id="iubArabicText" style="color: #FFFFFF; font-size: 1.3rem;"></div>
+            </div>
+
+            <!-- Urdu Translation -->
+            <div class="matn-display-box" style="margin-bottom: 1.25rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-gold); font-weight: 700;">Urdu Translation:</span>
+                <span style="font-size: 0.75rem; background: rgba(212, 175, 55, 0.15); color: var(--text-gold); padding: 0.15rem 0.5rem; border-radius: 4px;" id="iubTranslatorName">مولانا داود راز</span>
+              </div>
+              <div class="urdu-text" id="iubUrduText" style="color: var(--text-primary); font-size: 1.15rem;"></div>
+            </div>
+
+            <!-- Narrators Extracted -->
+            <div id="iubNarratorsSection" style="margin-bottom: 1.5rem; display: none;">
+              <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.45rem;">Extracted Narrators from Chain:</span>
+              <div id="iubNarratorsList" style="display: flex; flex-wrap: wrap; gap: 0.4rem;"></div>
+            </div>
+
+            <!-- Action Button to Verify -->
+            <button class="btn-primary" onclick="verifyFetchedIubHadith()" style="background: linear-gradient(135deg, var(--accent-gold), #B48214);">
+              <span>⚡</span> <span data-i18n="iub_verify_action_btn">Verify This Hadith with 5 Classical Rules</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Dedicated Sanad Diagram -->
+    <div id="tabGraph" class="tab-panel">
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-title-icon">📜</span>
+            <span>Interactive Sanad (Isnad) Transmission Diagram</span>
+          </div>
+          <span style="font-size: 0.85rem; color: var(--text-secondary);">Click on any narrator to inspect biographical data & Jarh wa Ta'dil</span>
+        </div>
+        <div class="sanad-graph-wrapper" id="dedicatedSanadGraph" style="min-height: 250px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Guided Auditor Wizard -->
+    <div id="tabAuditor" class="tab-panel">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;" data-i18n="auditor_title">Interactive Hadith Rule Auditor</h2>
+        <p style="color: var(--text-secondary);" data-i18n="auditor_subtitle">Step-by-step diagnostic questionnaire to evaluate any Hadith following classical scholarly methodology.</p>
+      </div>
+      <div id="auditorWizardContainer"></div>
+    </div>
+
+    <!-- TAB 4: Hadith Corpus Library -->
+    <div id="tabCorpus" class="tab-panel">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="corpus-filters">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="corpusSearchInput" placeholder="Search Hadiths, keywords, narrators..." data-i18n-placeholder="search_placeholder" oninput="filterCorpus(this.value)">
+          </div>
+        </div>
+      </div>
+      <div class="hadith-cards-grid" id="hadithCorpusGrid"></div>
+    </div>
+
+    <!-- TAB 5: Biographical Directory (Ilm ar-Rijal) -->
+    <div id="tabRijal" class="tab-panel">
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <div class="corpus-filters">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="rijalSearchInput" placeholder="Search narrators by name, city, or era..." data-i18n-placeholder="rijal_search_placeholder" oninput="renderRijalDirectory(this.value)">
+          </div>
+        </div>
+      </div>
+      <div class="hadith-cards-grid" id="rijalDirectoryGrid"></div>
+    </div>
+
+    <!-- TAB 6: Usul al-Hadith Rules Guide -->
+    <div id="tabRules" class="tab-panel">
+      <div class="glass-card" style="margin-bottom: 1.75rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-gold);">
+          أصول وقواعد مصطلح الحديث (The 5 Golden Criteria of Sahih Hadith)
+        </h2>
+        <p style="color: var(--text-secondary); line-height: 1.7;">
+          As defined by Ibn al-Salah (d. 643H) in his famous <em>Muqaddimah</em> and adopted by Al-Nawawi, Ibn Hajar, and the consensus of Hadith masters:
+          <br>
+          <span class="arabic-text" style="color: var(--text-emerald); display: block; margin: 0.5rem 0;">
+            "هو الحديث المسند الذي يتصل إسناده بنقل العدل الضابط عن العدل الضابط إلى منتهاه ولا يكون شاذاً ولا معللاً."
+          </span>
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
+        
+        <div class="glass-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.65rem;">
+            1. اتصال السند (Chain Continuity)
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Every narrator in the isnad must have received the Hadith directly from their teacher without any missing link from the compiler up to the Prophet ﷺ.
+          </p>
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-emerald);">
+            <strong>Chain Breaks:</strong> Mu'allaq (beginning missing), Mursal (companion missing), Mu'dal (2+ consecutive missing), Munqati' (1 missing in middle).
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 0.65rem;">
+            2. عدالة الرواة (Moral Probity of Narrators)
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Each narrator must be a sane, adult Muslim, free from major sins (Fisq), innovations (Bid'ah), or any reputation of falsehood. All Companions (Sahabah) are upright by divine endorsement.
+          </p>
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-gold);">
+            <strong>Jarh Deficiencies:</strong> Kadhdhab (fabricator - causes Mawdu'), Matruk (abandoned), Majhul (unknown narrator).
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-hasan); margin-bottom: 0.65rem;">
+            3. ضبط الرواة (Retentive Memory Precision)
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            Narrators must possess precision, either through flawless oral memory (Dabt al-Sadr) or preserved written manuscripts (Dabt al-Kitab).
+          </p>
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-hasan);">
+            <strong>Distinction:</strong> Tamam al-Dabt (perfect memory -> Sahih) vs. Khafif al-Dabt (sound with slight deficit -> Hasan).
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: #A855F7; margin-bottom: 0.65rem;">
+            4. السلامة من الشذوذ (Non-Anomaly)
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            A reliable narrator's report must not contradict reports from narrators who are more trustworthy (Awthaq) or greater in number.
+          </p>
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #A855F7;">
+            <strong>Classifications:</strong> Shadhdh (anomalous report) vs. Mahfuz (sound preserved report); Munkar (weak contradicting sound).
+          </div>
+        </div>
+
+        <div class="glass-card">
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: #EC4899; margin-bottom: 0.65rem;">
+            5. السلامة من العلة القادحة (Absence of Hidden Defect)
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+            The report must be free from subtle, hidden defects ('Illah Qadihah) that invalidate authenticity despite an apparently sound exterior.
+          </p>
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #EC4899;">
+            <strong>Subtle Flaws:</strong> Idraj (inserted text into Matn), Irsal Khafi (concealed drop), and subtle Tadlis.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Narrator Biographical Inspector Modal -->
+  <div class="modal-overlay" id="narratorModal" onclick="if(event.target === this) closeNarratorModal()">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeNarratorModal()">✕</button>
+      <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 0.4rem;" id="modalRawiName">Narrator Profile</h3>
+      <div style="color: var(--text-gold); font-size: 0.88rem; margin-bottom: 1.2rem;" id="modalRawiMeta"></div>
+      <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7;" id="modalRawiNotes"></p>
+      <div id="modalRawiMetrics"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-quote">«إِنَّ هَذَا الْعِلْمَ دِينٌ، فَانْظُرُوا عَمَّنْ تَأْخُذُونَ دِينَكُمْ»</div>
+    <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+      — Muhammad ibn Sirin (رحمه الله), Sahih Muslim Muqaddimah
+    </div>
+    <p data-i18n="footer_text">
+      Built with scholarly devotion to Ilm al-Hadith. Adhering to the methodologies of Bukhari, Muslim, Ibn al-Salah, and Ibn Hajar.
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/rule_engine.js"></script>
+  <script src="js/sanad_graph.js"></script>
+  <script src="js/auditor.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
