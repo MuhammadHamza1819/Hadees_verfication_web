@@ -1277,3 +1277,19 @@ body {
 /* Light theme: replace white-on-dark tracks */
 [data-theme="light"] .score-circle-bg { stroke: rgba(15, 23, 42, 0.1); }
 [data-theme="light"] .rule-progress-bar-bg { background: rgba(15, 23, 42, 0.1); }
+
+/* Read-only chain display */
+.step-name {
+  flex: 1;
+  min-width: 150px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.step-generation { color: var(--text-muted); font-weight: 400; font-size: 0.8rem; }
+.formula-label {
+  color: var(--text-gold);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+}

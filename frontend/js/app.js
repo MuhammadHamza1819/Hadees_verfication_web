@@ -119,6 +119,7 @@ function selectPreset(presetId) {
 
   customChainNarrators = [...item.narrator_ids];
   customChainFormulas = [...item.transmission_formulas];
+  chainDisplayNames = null;
 
   const textInput = document.getElementById("hadithCustomTextInput");
   if (textInput) {
@@ -129,7 +130,17 @@ function selectPreset(presetId) {
   runVerification();
 }
 
-// Chain Builder UI
+// Chain display (read-only): shows the sanad of the selected hadith
+let chainDisplayNames = null;
+
+const FORMULA_LABELS = {
+  "haddathana": "حَدَّثَنَا (Haddathana)",
+  "akhbarana": "أَخْبَرَنَا (Akhbarana)",
+  "sami'tu": "سَمِعْتُ (Sami'tu)",
+  "an": "عَنْ ('An - Mu'an'an)",
+  "qala": "قَالَ (Qala)"
+};
+
 function renderChainBuilder() {
   const container = document.getElementById("chainStepsList");
   if (!container) return;
@@ -140,74 +151,31 @@ function renderChainBuilder() {
     const row = document.createElement("div");
     row.className = "chain-step-row";
 
-    // Build Narrator Options
-    let optionsHtml = Object.values(NARRATORS_DATA).map(rawi => {
-      const name = currentLang === "ar" ? rawi.name_ar : (currentLang === "ur" ? rawi.name_ur : rawi.name_en);
-      return `<option value="${rawi.id}" ${rawi.id === rawiId ? 'selected' : ''}>${name} (${rawi.generation})</option>`;
-    }).join("");
+    const rawi = NARRATORS_DATA[rawiId];
+    let name = rawiId;
+    let generation = "";
+    if (rawi) {
+      name = currentLang === "ar" ? rawi.name_ar : (currentLang === "ur" ? rawi.name_ur : rawi.name_en);
+      generation = rawi.generation;
+    }
+    if (chainDisplayNames && chainDisplayNames[index]) {
+      name = chainDisplayNames[index];
+    }
 
-    // Build Formula Options (if not last step)
     let formulaHtml = "";
     if (index < customChainNarrators.length - 1) {
-      const currentFormula = customChainFormulas[index] || "haddathana";
-      formulaHtml = `
-        <select class="formula-select" onchange="updateFormula(${index}, this.value)">
-          <option value="haddathana" ${currentFormula === 'haddathana' ? 'selected' : ''}>حَدَّثَنَا (Haddathana)</option>
-          <option value="akhbarana" ${currentFormula === 'akhbarana' ? 'selected' : ''}>أَخْبَرَنَا (Akhbarana)</option>
-          <option value="sami'tu" ${currentFormula === "sami'tu" ? 'selected' : ''}>سَمِعْتُ (Sami'tu)</option>
-          <option value="an" ${currentFormula === 'an' ? 'selected' : ''}>عَنْ ('An - Mu'an'an)</option>
-          <option value="qala" ${currentFormula === 'qala' ? 'selected' : ''}>قَالَ (Qala)</option>
-        </select>
-      `;
+      const f = customChainFormulas[index] || "haddathana";
+      formulaHtml = `<span class="formula-label">${FORMULA_LABELS[f] || f}</span>`;
     }
 
     row.innerHTML = `
       <span class="step-index-badge">${index + 1}</span>
-      <select class="step-select" onchange="updateNarrator(${index}, this.value)">
-        ${optionsHtml}
-      </select>
+      <span class="step-name">${name}${generation ? ` <span class="step-generation">(${generation})</span>` : ""}</span>
       ${formulaHtml}
-      ${customChainNarrators.length > 2 && index !== customChainNarrators.length - 1 ? `
-        <button class="step-remove-btn" onclick="removeChainStep(${index})" title="Remove link">✕</button>
-      ` : ''}
     `;
 
     container.appendChild(row);
   });
-}
-
-function updateNarrator(index, newId) {
-  customChainNarrators[index] = newId;
-  currentHadithId = "custom";
-  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
-  runVerification();
-}
-
-function updateFormula(index, newFormula) {
-  customChainFormulas[index] = newFormula;
-  currentHadithId = "custom";
-  document.querySelectorAll(".preset-btn").forEach(b => b.classList.remove("active"));
-  runVerification();
-}
-
-function addChainStep() {
-  const insertIndex = Math.max(customChainNarrators.length - 1, 1);
-  customChainNarrators.splice(insertIndex, 0, "al_zuhri");
-  customChainFormulas.splice(insertIndex - 1, 0, "haddathana");
-  currentHadithId = "custom";
-  renderChainBuilder();
-  runVerification();
-}
-
-function removeChainStep(index) {
-  if (customChainNarrators.length <= 2) return;
-  customChainNarrators.splice(index, 1);
-  if (index < customChainFormulas.length) {
-    customChainFormulas.splice(index, 1);
-  }
-  currentHadithId = "custom";
-  renderChainBuilder();
-  runVerification();
 }
 
 // Master Verification Trigger
@@ -652,6 +620,7 @@ async function verifyFetchedIubHadith() {
       // Update custom narrators from server response
       if (result.verification && result.verification.chain_nodes) {
         customChainNarrators = result.verification.chain_nodes.map(n => n.id || n.name_en);
+        chainDisplayNames = result.verification.chain_nodes.map(n => currentLang === 'ar' ? n.name_ar : (currentLang === 'ur' ? n.name_ur : n.name_en));
         customChainFormulas = Array(Math.max(customChainNarrators.length - 1, 1)).fill("haddathana");
         renderChainBuilder();
       }
@@ -670,9 +639,12 @@ async function verifyFetchedIubHadith() {
   // Fallback to local verification
   if (lastFetchedIubData.sanad_narrators && lastFetchedIubData.sanad_narrators.length > 0) {
     const mapped = [];
+    const names = [];
     lastFetchedIubData.sanad_narrators.forEach(n => {
-      let foundKey = null;
+      names.push(n.name);
+      let foundKey = NARRATORS_DATA[n.standard_id] ? n.standard_id : null;
       for (const [key, rawi] of Object.entries(NARRATORS_DATA)) {
+        if (foundKey) break;
         if (rawi.name_ar.includes(n.name) || n.name.includes(rawi.name_ar)) {
           foundKey = key;
           break;
@@ -683,6 +655,7 @@ async function verifyFetchedIubHadith() {
     if (!mapped.includes("prophet_muhammad")) {
       mapped.push("prophet_muhammad");
     }
+    chainDisplayNames = names;
     customChainNarrators = mapped;
     customChainFormulas = Array(Math.max(mapped.length - 1, 1)).fill("haddathana");
   }
