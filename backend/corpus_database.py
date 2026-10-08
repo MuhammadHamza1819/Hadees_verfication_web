@@ -41,7 +41,8 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             "sami'tu",
             "sami'tu"
         ],
-        "known_verdict": "SAHIH",
+        "known_verdict": "SAHIH_LI_DHATIHI",
+        "corroborated": False,
         "known_sub_verdict": "Sahih li-dhatihi (Muttafaq 'Alayh)",
         "ruling_summary_en": "Meets all five conditions of authenticity unconditionally. Unbroken chain of eminent trustworthy memorizers with explicit direct audition terms ('sami'tu', 'haddathana').",
         "ruling_summary_ar": "مستوفٍ لشروط الصحة الخمسة بالإجماع: اتصال سليم، رواة ثقات أثبات، ضبط تام، خلو تام من الشذوذ والعلة القادحة.",
@@ -81,7 +82,8 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             "an",
             "an"
         ],
-        "known_verdict": "SAHIH",
+        "known_verdict": "SAHIH_LI_DHATIHI",
+        "corroborated": False,
         "known_sub_verdict": "Sahih li-dhatihi (Golden Chain / Silsilat al-Dhahab)",
         "ruling_summary_en": "The pinnacle of Isnads in Hadith literature: Imam Malik from Nafi' from Ibn Umar. Fully authentic and sound.",
         "ruling_summary_ar": "أصح الأسانيد قاطبة كما نص عليه البخاري والنسائي (مالك عن نافع عن ابن عمر).",
@@ -118,7 +120,8 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             "an",
             "an"
         ],
-        "known_verdict": "HASAN",
+        "known_verdict": "HASAN_LI_GHAYRIHI",
+        "corroborated": True,
         "known_sub_verdict": "Hasan li-ghayrihi (Strengthened through multiple routes)",
         "ruling_summary_en": "Individually, each individual single chain contains minor weakness in retentive memory, but when combined across its multiple independent routes (Turuq and Shawahid), it ascends to Hasan li-ghayrihi (Sound through corroboration).",
         "ruling_summary_ar": "حسن لغيره؛ طرقه مفردة لا تخلو من مقال لكنها تتقوى باجتماع الشواهد المتعددة كما قرره المزي والذهبي والألباني.",
@@ -155,6 +158,7 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             "an"
         ],
         "known_verdict": "DAIF",
+        "corroborated": False,
         "known_sub_verdict": "Da'if Jiddan / Batil (Severely Weak / Void Chain)",
         "ruling_summary_en": "Fails the rule of 'Adalah and Dabt due to the presence of Abu Atikah Tarif ibn Salman, who was abandoned (Matruk) and accused of fabricating reports. The phrase 'even unto China' is deemed baseless.",
         "ruling_summary_ar": "ضعيف جداً أو باطل السند؛ مداره على أبي عاتكة طريف بن سلمان وهو متروك الحديث ومنكر الرواية، لا يصح عنه.",
@@ -196,6 +200,7 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             "an"
         ],
         "known_verdict": "MAWDU",
+        "corroborated": False,
         "known_sub_verdict": "Mawdu' / La Asla Lahu (Fabricated / Baseless)",
         "ruling_summary_en": "Completely lacks any authentic Sanad. Classified as fabricated or baseless by classical Hadith masters. While loving one's home is a natural human sentiment, attributing this phrase to the Prophet ﷺ as revelation is false.",
         "ruling_summary_ar": "موضوع لا أصل له مرفوعاً إلى النبي ﷺ. نص على وضعه الصغاني والسخاوي والألباني.",
@@ -205,5 +210,97 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             {"scholar": "Al-San'ani", "verdict": "Mawdu' (Fabricated)"},
             {"scholar": "Al-Albani", "verdict": "Mawdu' (Silsilat al-Ahadith al-Da'ifah #36)"}
         ]
-    }
+    },
+    "hadith_siwak": {
+        "id": "hadith_siwak",
+        "title_en": "Siwak Before Every Prayer (Law la an ashuqqa)",
+        "title_ar": "حديث: لولا أن أشق على أمتي لأمرتهم بالسواك",
+        "title_ur": "حدیث: اگر امت پر مشقت کا اندیشہ نہ ہوتا تو مسواک کا حکم دیتا",
+        "book": "Sunan al-Tirmidhi #22 / Sahih al-Bukhari #887",
+        "hadith_number": "Tirmidhi #22",
+        "chapter_ar": "أبواب الطهارة - باب ما جاء في السواك",
+        "chapter_en": "Book of Purification - Chapter on the Siwak",
+        "chapter_ur": "کتاب الطہارۃ - مسواک کا بیان",
+        "sanad_ar": "حَدَّثَنَا أَبُو كُرَيْبٍ، عَنْ مُحَمَّدِ بْنِ عَمْرٍو، عَنْ أَبِي سَلَمَةَ، عَنْ أَبِي هُرَيْرَةَ",
+        "sanad_en": "Via Muhammad ibn Amr, from Abu Salamah, from Abu Hurayrah, from the Prophet (simplified for the benchmark).",
+        "sanad_ur": "محمد بن عمرو سے، انہوں نے ابو سلمہ سے، انہوں نے ابوہریرہ سے (بینچ مارک کے لیے مختصر)۔",
+        "matn_ar": "لَوْلَا أَنْ أَشُقَّ عَلَى أُمَّتِي لَأَمَرْتُهُمْ بِالسِّوَاكِ مَعَ كُلِّ صَلَاةٍ.",
+        "matn_en": "Were it not that I would burden my nation, I would have commanded them to use the siwak with every prayer.",
+        "matn_ur": "اگر مجھے اپنی امت پر مشقت کا اندیشہ نہ ہوتا تو میں انہیں ہر نماز کے ساتھ مسواک کا حکم دیتا۔",
+        "narrator_ids": [
+                "al_tirmidhi",
+                "muhammad_ibn_amr_ibn_alqamah",
+                "abu_salamah_ibn_abd_al_rahman",
+                "abu_hurayrah",
+                "prophet_muhammad"
+        ],
+        "transmission_formulas": [
+                "haddathana",
+                "an",
+                "an",
+                "an"
+        ],
+        "known_verdict": "SAHIH_LI_GHAYRIHI",
+        "corroborated": True,
+        "known_sub_verdict": "Sahih li-ghayrihi (Hasan chain raised by supporting routes)",
+        "ruling_summary_en": "The chain of Muhammad ibn Amr is only Hasan because of his slightly lighter precision, but it is corroborated by other authentic routes of Abu Hurayrah, raising it to Sahih li-ghayrihi - the textbook example given by Ibn al-Salah.",
+        "ruling_summary_ar": "إسناد محمد بن عمرو حسن لخفة ضبطه، لكنه توبع من طرق صحيحة عن أبي هريرة فارتقى إلى الصحيح لغيره، وهو المثال الذي ذكره ابن الصلاح.",
+        "ruling_summary_ur": "محمد بن عمرو کی سند ضبط میں خفت کی وجہ سے حسن ہے، مگر ابوہریرہ کے دیگر صحیح طرق سے تائید ملنے پر صحیح لغیرہ ہے؛ ابن الصلاح نے یہی مثال ذکر کی۔",
+        "classical_scholars": [
+                {
+                        "scholar": "Ibn al-Salah",
+                        "verdict": "Hasan li-dhatihi in itself, Sahih li-ghayrihi through corroboration"
+                },
+                {
+                        "scholar": "Imam al-Bukhari",
+                        "verdict": "Narrated it in Sahih al-Bukhari through another route"
+                }
+        ]
+    },
+    "hadith_mother_first": {
+        "id": "hadith_mother_first",
+        "title_en": "Your Mother, then Your Mother (Man abarru?)",
+        "title_ar": "حديث: من أبر؟ قال: أمك",
+        "title_ur": "حدیث: میں کس سے نیکی کروں؟ فرمایا: اپنی ماں سے",
+        "book": "Sunan Abi Dawud #5139 / Sunan al-Tirmidhi #1897",
+        "hadith_number": "Abu Dawud #5139",
+        "chapter_ar": "كتاب الأدب - باب في بر الوالدين",
+        "chapter_en": "Book of Manners - Chapter on Kindness to Parents",
+        "chapter_ur": "کتاب الادب - والدین کے ساتھ حسن سلوک",
+        "sanad_ar": "حَدَّثَنَا مُسَدَّدٌ، عَنْ بَهْزِ بْنِ حَكِيمٍ، عَنْ أَبِيهِ، عَنْ جَدِّهِ مُعَاوِيَةَ بْنِ حَيْدَةَ",
+        "sanad_en": "Musaddad, from Bahz ibn Hakim, from his father, from his grandfather Mu'awiyah ibn Haydah (simplified for the benchmark).",
+        "sanad_ur": "مسدد، بہز بن حکیم سے، اپنے والد سے، اپنے دادا معاویہ بن حیدہ سے (بینچ مارک کے لیے مختصر)۔",
+        "matn_ar": "قُلْتُ: يَا رَسُولَ اللَّهِ، مَنْ أَبَرُّ؟ قَالَ: أُمَّكَ، ثُمَّ أُمَّكَ، ثُمَّ أُمَّكَ، ثُمَّ أَبَاكَ، ثُمَّ الْأَقْرَبَ فَالْأَقْرَبَ.",
+        "matn_en": "I said: O Messenger of Allah, to whom should I show kindness? He said: Your mother, then your mother, then your mother, then your father, then the nearest and the next nearest.",
+        "matn_ur": "میں نے پوچھا: اے اللہ کے رسول! میں کس کے ساتھ نیکی کروں؟ فرمایا: اپنی ماں کے ساتھ، پھر ماں کے ساتھ، پھر ماں کے ساتھ، پھر باپ کے ساتھ، پھر قریب ترین رشتہ داروں کے ساتھ۔",
+        "narrator_ids": [
+                "abu_dawud",
+                "musaddad",
+                "bahz_ibn_hakim",
+                "muawiyah_ibn_haydah",
+                "prophet_muhammad"
+        ],
+        "transmission_formulas": [
+                "haddathana",
+                "an",
+                "an",
+                "an"
+        ],
+        "known_verdict": "HASAN_LI_DHATIHI",
+        "corroborated": False,
+        "known_sub_verdict": "Hasan li-dhatihi (Sound chain with a lighter-precision narrator)",
+        "ruling_summary_en": "The chain is continuous and every narrator is upright, but Bahz ibn Hakim is only truthful (Saduq) with lighter precision, so the report is Hasan in itself without needing outside support.",
+        "ruling_summary_ar": "السند متصل ورواته عدول، غير أن بهز بن حكيم صدوق خفيف الضبط، فالحديث حسن لذاته.",
+        "ruling_summary_ur": "سند متصل اور تمام روات عادل ہیں مگر بہز بن حکیم صدوق اور ہلکے ضبط والے ہیں، اس لیے یہ بذاتہ حسن ہے۔",
+        "classical_scholars": [
+                {
+                        "scholar": "Al-Tirmidhi",
+                        "verdict": "Hasan"
+                },
+                {
+                        "scholar": "Al-Albani",
+                        "verdict": "Hasan (Sahih Abi Dawud)"
+                }
+        ]
+    },
 }

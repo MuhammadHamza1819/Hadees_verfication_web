@@ -41,7 +41,7 @@ def get_corpus(q: Optional[str] = Query(None), verdict: Optional[str] = Query(No
     """Retrieve corpus hadiths with optional search and verdict filters."""
     results = list(CORPUS_DATABASE.values())
     if verdict:
-        results = [h for h in results if h["known_verdict"].upper() == verdict.upper()]
+        results = [h for h in results if h["known_verdict"].upper().startswith(verdict.upper())]
     if q:
         query_lower = q.lower()
         results = [
@@ -71,7 +71,8 @@ def get_hadith_detail(hadith_id: str):
             "ar": hadith["matn_ar"],
             "en": hadith["matn_en"],
             "ur": hadith["matn_ur"]
-        }
+        },
+        corroborated=hadith.get("corroborated", False)
     )
 
     return {
@@ -117,7 +118,8 @@ def run_verification(request: VerificationRequest):
                 "ar": hadith["matn_ar"],
                 "en": hadith["matn_en"],
                 "ur": hadith["matn_ur"]
-            }
+            },
+            corroborated=request.corroborated if request.corroborated is not None else hadith.get("corroborated", False)
         )
 
     # Custom chain verification
@@ -135,7 +137,8 @@ def run_verification(request: VerificationRequest):
         narrator_ids=narrator_ids,
         formulas=formulas,
         hadith_id=request.hadith_id or "custom",
-        matn_dict=matn_dict
+        matn_dict=matn_dict,
+        corroborated=bool(request.corroborated)
     )
 
 @app.get("/api/rules")
@@ -264,7 +267,7 @@ async def import_and_verify(payload: dict):
     first_urdu = hadith_data["urdu_translations"][0]["text"] if hadith_data.get("urdu_translations") else ""
     matn_dict = {
         "ar": hadith_data.get("arabic_text", ""),
-        "en": f"Hadith #{hadith_number} from {hadith_data.get('book_name_en')}",
+        "en": next((t["text"] for t in hadith_data.get("urdu_translations", []) if not any("\u0600" <= ch <= "\u06ff" for ch in t["text"])), f"Hadith #{hadith_number} from {hadith_data.get('book_name_en')}"),
         "ur": first_urdu
     }
     
@@ -272,7 +275,8 @@ async def import_and_verify(payload: dict):
         narrator_ids=narrator_ids,
         formulas=formulas,
         hadith_id=f"islamicurdubooks_{book_id}_{hadith_number}",
-        matn_dict=matn_dict
+        matn_dict=matn_dict,
+        corroborated=bool(payload.get("corroborated", False))
     )
     
     return {

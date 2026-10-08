@@ -71,7 +71,7 @@
 
 [data-lang="ur"] .preset-btn {
   font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
-  font-size: 0.85rem;
+  font-size: 1rem;
   line-height: 1.4;
   text-align: right;
   direction: rtl;
@@ -145,14 +145,14 @@
 
 [dir="rtl"] .preset-btn {
   text-align: right;
-  flex-direction: row-reverse;
-  justify-content: space-between;
+  align-items: flex-start;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 [dir="rtl"] .preset-btn .preset-badge {
-  margin-left: 0;
-  margin-right: auto;
   flex-shrink: 0;
+  align-self: flex-start;
 }
 
 [dir="rtl"] .rule-header-row {
@@ -283,3 +283,7 @@
     align-items: stretch;
   }
 }
+/* Urdu: larger translation text and a roomier preset grid */
+[data-lang="ur"] .matn-translation-text { font-size: 1.3rem; line-height: 2.3; }
+[data-lang="ur"] .preset-buttons-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+[data-lang="ur"] .rule-details-list li { font-size: 1.05rem; }

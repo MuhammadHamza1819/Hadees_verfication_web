@@ -420,11 +420,99 @@ def evaluate_illah(hadith_id: str, edge_reports: List[Dict[str, Any]]) -> RuleAu
         scholar_reference="Ibn Rajab al-Hanbali in Sharh 'Ilal al-Tirmidhi"
     )
 
+# The six classical grades of a hadith
+GRADES: Dict[str, Dict[str, str]] = {
+    "SAHIH_LI_DHATIHI": {
+        "badge": "sahih",
+        "verdict": "Sahih li-dhatihi", "verdict_ar": "صحيح لذاته", "verdict_ur": "صحیح لذاتہ",
+        "sub_en": "Sahih li-dhatihi (Authentic in itself - all 5 conditions fully met)",
+        "sub_ar": "صحيح لذاته مستوفٍ للشروط الخمسة بتمام الضبط",
+        "sub_ur": "صحیح لذاتہ - پانچوں شرائط کامل ضبط کے ساتھ پوری",
+        "summary_en": "Unanimously authentic. Unbroken chain, upright narrators with complete retentive precision, free of anomaly and hidden defects.",
+        "summary_ar": "صحيح بذاته؛ اتصال السند وعدالة الرواة وتمام الضبط والسلامة من الشذوذ والعلة.",
+        "summary_ur": "بذاتہ صحیح؛ سند متصل، روات عادل اور کامل الضبط، شذوذ و علت سے پاک۔",
+    },
+    "SAHIH_LI_GHAYRIHI": {
+        "badge": "sahih",
+        "verdict": "Sahih li-ghayrihi", "verdict_ar": "صحيح لغيره", "verdict_ur": "صحیح لغیرہ",
+        "sub_en": "Sahih li-ghayrihi (Authentic through corroboration - a Hasan li-dhatihi raised by supporting routes)",
+        "sub_ar": "صحيح لغيره: حسن لذاته ارتقى إلى الصحة بتعدد الطرق",
+        "sub_ur": "صحیح لغیرہ - حسن لذاتہ جو متعدد طرق سے صحیح کے درجے تک پہنچی",
+        "summary_en": "On its own the chain is Hasan (narrators upright but of lighter precision). Independent supporting routes (Mutaba'at / Shawahid) lift it to the rank of Sahih.",
+        "summary_ar": "إسناده حسن لذاته لخفة ضبط بعض رواته، فلما تعددت طرقه ارتقى إلى الصحيح لغيره.",
+        "summary_ur": "تنہا سند حسن ہے (راوی عادل مگر ضبط میں خفیف)؛ متابعات و شواہد کی وجہ سے صحیح لغیرہ کے درجے کو پہنچی۔",
+    },
+    "HASAN_LI_DHATIHI": {
+        "badge": "hasan",
+        "verdict": "Hasan li-dhatihi", "verdict_ar": "حسن لذاته", "verdict_ur": "حسن لذاتہ",
+        "sub_en": "Hasan li-dhatihi (Sound in itself - upright narrators of lighter precision)",
+        "sub_ar": "حسن لذاته: رواته عدول مع خفة في الضبط",
+        "sub_ur": "حسن لذاتہ - روات عادل مگر ضبط میں خفیف کمی",
+        "summary_en": "Acceptable and usable as evidence. Chain is continuous and narrators upright, but at least one has slightly lighter retentive precision (Khafif al-Dabt).",
+        "summary_ar": "حديث مقبول يحتج به؛ سنده متصل ورواته عدول لكن في بعضهم خفة في الضبط.",
+        "summary_ur": "قابلِ حجت؛ سند متصل اور روات عادل مگر کسی راوی کے ضبط میں معمولی تخفیف ہے۔",
+    },
+    "HASAN_LI_GHAYRIHI": {
+        "badge": "hasan",
+        "verdict": "Hasan li-ghayrihi", "verdict_ar": "حسن لغيره", "verdict_ur": "حسن لغیرہ",
+        "sub_en": "Hasan li-ghayrihi (Lightly weak in itself, strengthened to Hasan by supporting routes)",
+        "sub_ar": "حسن لغيره: ضعيف ضعفاً يسيراً ارتقى إلى الحسن بتعدد الطرق",
+        "sub_ur": "حسن لغیرہ - ہلکا ضعف جو متعدد طرق سے حسن کے درجے تک پہنچا",
+        "summary_en": "The single chain has a light weakness (doubtful continuity such as Tadlis, or weak memory) but it is not a fabricator. Several independent routes strengthen it to Hasan.",
+        "summary_ar": "في إسناده ضعف يسير (كشبهة تدليس أو سوء حفظ) غير شديد، وقد تقوى بتعدد الطرق فارتقى إلى الحسن لغيره.",
+        "summary_ur": "تنہا سند میں ہلکا ضعف ہے (تدلیس کا شبہ یا کمزور حافظہ) مگر متعدد طرق سے تقویت پا کر حسن لغیرہ بنی۔",
+    },
+    "DAIF": {
+        "badge": "daif",
+        "verdict": "Da'if", "verdict_ar": "ضعيف", "verdict_ur": "ضعیف",
+        "sub_en": "Da'if (Weak - fails one or more conditions of acceptance)",
+        "sub_ar": "حديث ضعيف لفقده شرطاً من شروط القبول",
+        "sub_ur": "ضعیف - قبولیت کی کوئی شرط مفقود ہے",
+        "summary_en": "Fails the conditions of Sahih/Hasan: a broken chain, a weak or doubtful narrator, or an anomaly, with no corroboration to repair it.",
+        "summary_ar": "لم يستوفِ شروط القبول؛ لانقطاع في السند أو ضعف راوٍ أو شذوذ، ولا ما يجبره من الطرق.",
+        "summary_ur": "قبولیت کی شرائط پر پورا نہیں اترتی: سند میں انقطاع، راوی کا ضعف یا شذوذ ہے اور کوئی تقویت دینے والا طریق نہیں۔",
+    },
+    "MAWDU": {
+        "badge": "mawdu",
+        "verdict": "Mawdu'", "verdict_ar": "موضوع", "verdict_ur": "موضوع (من گھڑت)",
+        "sub_en": "Mawdu' (Fabricated - falsely attributed to the Prophet)",
+        "sub_ar": "حديث موضوع مكذوب لا أصل له",
+        "sub_ur": "موضوع - من گھڑت اور بے بنیاد روایت",
+        "summary_en": "Rejected with certainty. Contains a convicted fabricator or has no authentic prophetic chain at all.",
+        "summary_ar": "مردود قطعاً؛ في إسناده وضّاع أو لا يُعرف له إسناد صحيح إلى رسول الله ﷺ.",
+        "summary_ur": "قطعی طور پر مردود؛ سند میں جھوٹا راوی ہے یا رسول اللہ ﷺ تک کوئی صحیح سند نہیں۔",
+    },
+}
+
+
+def determine_grade(rules: List[RuleAuditItem], is_fabricated: bool, corroborated: bool) -> str:
+    """Map the five rule results (and supporting routes) to one of the six grades."""
+    by_id = {r.rule_id: r for r in rules}
+    dabt, adalah = by_id["dabt"], by_id["adalah"]
+
+    if is_fabricated:
+        return "MAWDU"
+    if any(r.status == "FAIL" and r.rule_id != "dabt" for r in rules):
+        return "DAIF"
+    if dabt.status == "FAIL":
+        # A weak-memory narrator who is otherwise upright can be repaired by corroboration
+        if corroborated and dabt.score >= 40 and adalah.score >= 70:
+            return "HASAN_LI_GHAYRIHI"
+        return "DAIF"
+    if any(r.status == "WARNING" for r in rules):
+        # Doubt such as Tadlis: weak alone, repaired by supporting routes
+        return "HASAN_LI_GHAYRIHI" if corroborated else "DAIF"
+    if dabt.score >= 90:
+        return "SAHIH_LI_DHATIHI"
+    return "SAHIH_LI_GHAYRIHI" if corroborated else "HASAN_LI_DHATIHI"
+
+
 def verify_hadith(
     narrator_ids: List[str],
     formulas: List[str],
     hadith_id: str = "",
-    matn_dict: Dict[str, str] = None
+    matn_dict: Dict[str, str] = None,
+    corroborated: bool = False
 ) -> VerificationResponse:
     """
     Master verification coordinator combining all 5 rules to determine scientific Hadith grade.
@@ -447,50 +535,13 @@ def verify_hadith(
         (rule_illah.score * 0.10)
     )
 
-    # Determine Verdict
-    if rule_adalah.score == 0 or hadith_id in ["hadith_hubb_al_watan"]:
-        verdict = "MAWDU"
-        verdict_ar = "موضوع"
-        verdict_ur = "موضوع (من گھڑت)"
-        sub_en = "Mawdu' / La Asla Lahu (Fabricated / Void of Sanad)"
-        sub_ar = "حديث موضوع ومكذوب لا أصل له"
-        sub_ur = "موضوع و باطل روایت، جس کی کوئی سند رسول اللہ ﷺ تک نہیں"
-        summary_en = "Rejected with certainty. Contains a convicted fabricator or completely lacks an authentic prophetic chain."
-        summary_ar = "مردود قطعاً؛ الإسناد مشتمل على وضاع أو لا يُعرف له إسناد أصلاً إلى رسول الله ﷺ."
-        summary_ur = "قطعی طور پر مردود؛ اس کی سند میں جھوٹا راوی ہے یا رسول اللہ ﷺ تک اس کا کوئی وجود ہی نہیں۔"
-
-    elif any(r.status == "FAIL" for r in rules) or overall_score < 60:
-        verdict = "DAIF"
-        verdict_ar = "ضعيف"
-        verdict_ur = "ضعیف"
-        sub_en = "Da'if (Weak - Deficient in Foundational Conditions)"
-        sub_ar = "حديث ضعيف لفقده أحد شروط الصحة"
-        sub_ur = "ضعیف حدیث - صحت کی شرائط میں کمی کے سبب"
-        summary_en = "Fails to meet the rigorous criteria of Sahih/Hasan due to broken chain, memory defect, or uncorroborated anomaly."
-        summary_ar = "لم يستوفِ شروط القبول؛ لوجود انقطاع أو ضعف في حفظ أحد الرواة أو نكارة في المتن."
-        summary_ur = "قبولیت کی شرائط پر پورا نہیں اترتی، سند میں انقطاع یا راوی کے حفظ میں کمزوری کی وجہ سے۔"
-
-    elif rule_dabt.score < 90 or any(r.status == "WARNING" for r in rules):
-        verdict = "HASAN"
-        verdict_ar = "حسن"
-        verdict_ur = "حسن"
-        sub_en = "Hasan (Sound - Acceptable with Light Retentive Scrutiny)"
-        sub_ar = "حديث حسن مقبول لذاته أو لغيره"
-        sub_ur = "حسن حدیث - قابلِ قبول و معتبر"
-        summary_en = "Meets the conditions of acceptance; narrators are upright and trustworthy with slight concession in memory precision."
-        summary_ar = "حديث مقبول يحتج به؛ رواته عدول ثقات مع خفة يسيرة في الضبط لا تقدح في الاحتجاج."
-        summary_ur = "قابلِ حجت حدیث؛ روات متقی اور معتبر ہیں اگرچہ یادداشت میں معمولی تخفیف ہے۔"
-
-    else:
-        verdict = "SAHIH"
-        verdict_ar = "صحيح"
-        verdict_ur = "صحیح"
-        sub_en = "Sahih li-dhatihi (Authentic of the Highest Grade)"
-        sub_ar = "صحيح لذاته مستوفٍ للشروط الخمسة"
-        sub_ur = "صحیح لذاتہ - صحت کی پانچوں شرائط پر کامل"
-        summary_en = "Unanimously authentic. Meets all 5 classical conditions: unbroken chain, upright narrators, pristine retentive memory, non-anomalous, and free of hidden defects."
-        summary_ar = "صحيح متفق عليه؛ استوفى شروط الأئمة الخمسة كاملة: اتصال السند، عدالة الرواة، تمام الضبط، سلامة من الشذوذ، وخلو من العلة."
-        summary_ur = "متفقہ طور پر صحیح؛ پانچوں شرائط پر بدرجہ اتم پورا اترتی ہے: سند متصل، روات عادل، کامل الحفظ، اور شذوذ و علت سے پاک۔"
+    # Determine Verdict (six classical grades)
+    is_fabricated = rule_adalah.score == 0 or hadith_id in ["hadith_hubb_al_watan"]
+    grade_code = determine_grade(rules, is_fabricated, corroborated)
+    g = GRADES[grade_code]
+    verdict, verdict_ar, verdict_ur = g["verdict"], g["verdict_ar"], g["verdict_ur"]
+    sub_en, sub_ar, sub_ur = g["sub_en"], g["sub_ar"], g["sub_ur"]
+    summary_en, summary_ar, summary_ur = g["summary_en"], g["summary_ar"], g["summary_ur"]
 
     # Build chain nodes for visualizer
     chain_nodes = []
@@ -529,6 +580,9 @@ def verify_hadith(
         }
 
     return VerificationResponse(
+        grade=grade_code,
+        badge_class=g["badge"],
+        corroborated=corroborated,
         verdict=verdict,
         verdict_ar=verdict_ar,
         verdict_ur=verdict_ur,

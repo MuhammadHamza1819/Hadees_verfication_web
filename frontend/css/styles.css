@@ -1293,3 +1293,28 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
+
+.corroborated-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.corroborated-row input { accent-color: var(--accent-gold); width: 16px; height: 16px; }
+
+/* Larger, clearly readable text */
+.form-textarea.arabic-text {
+  font-size: 1.55rem;
+  line-height: 2.2;
+  min-height: 160px;
+}
+.matn-quote-text { font-size: 1.7rem; }
+.matn-translation-text { font-size: 1.1rem; line-height: 1.85; }
+.preset-btn { font-size: 0.98rem; line-height: 1.45; }
+.preset-btn .preset-badge { font-size: 0.78rem; }
+.rule-details-list li { font-size: 0.98rem; line-height: 1.7; }
+.rule-label-title { font-size: 1.02rem; }
+.form-label { font-size: 1rem; }

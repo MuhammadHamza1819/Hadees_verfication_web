@@ -130,7 +130,12 @@
           <textarea class="form-textarea arabic-text" id="hadithCustomTextInput" rows="3" data-i18n-placeholder="textarea_placeholder" placeholder="Paste Arabic text, English translation, or narrator chain here..."></textarea>
         </div>
 
-        <button class="btn-primary" id="executeVerifyBtn" onclick="runVerification()">
+        <label class="corroborated-row">
+          <input type="checkbox" id="corroboratedCheck" onchange="runVerification()">
+          <span data-i18n="corroborated_label">This hadith has supporting routes (Mutaba'at / Shawahid)</span>
+        </label>
+
+        <button class="btn-primary" id="executeVerifyBtn" onclick="executeVerification()">
           <span>⚡</span> <span data-i18n="verify_btn">Execute Scientific Verification</span>
         </button>
       </div>

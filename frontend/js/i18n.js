@@ -38,6 +38,7 @@ const I18N = {
     custom_input_label: "Or Enter / Select Hadith Chain & Text:",
     textarea_placeholder: "Paste Arabic text, English translation, or narrator chain here...",
     verify_btn: "Execute Scientific Verification",
+    corroborated_label: "This hadith has supporting routes (Mutaba'at / Shawahid)",
     reset_btn: "Reset Form",
     export_btn_title: "Print or Export Tahqiq Certificate",
 
@@ -113,6 +114,7 @@ const I18N = {
     custom_input_label: "أو أدخل متن الحديث وسلسلة رواته:",
     textarea_placeholder: "ضع نص الحديث الشريف، أو متنه، أو أسماء رواته هنا...",
     verify_btn: "إجراء التحقيق العلمي الدقيق",
+    corroborated_label: "لهذا الحديث طرق أخرى تعضده (متابعات / شواهد)",
     reset_btn: "إعادة ضبط",
     export_btn_title: "طباعة أو تصدير وثيقة التحقيق",
 
@@ -188,6 +190,7 @@ const I18N = {
     custom_input_label: "یا حدیث کا متن اور سند درج کریں:",
     textarea_placeholder: "حدیث کا عربی متن، اردو ترجمہ یا روات کی سند یہاں درج کریں...",
     verify_btn: "سائنسی و شرعی تحقیق کا آغاز کریں",
+    corroborated_label: "اس حدیث کے دیگر تائیدی طرق موجود ہیں (متابعات / شواہد)",
     reset_btn: "دوبارہ ترتیب دیں",
     export_btn_title: "تحقیق سرٹیفکیٹ پرنٹ یا ایکسپورٹ کریں",
 

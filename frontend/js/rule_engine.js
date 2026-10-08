@@ -3,7 +3,83 @@
  * Implements the 5 Foundational Classical Hadith Authenticity Conditions (شروط الصحة الخمسة)
  */
 
-function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj) {
+// The six classical grades of a hadith (mirrors backend GRADES)
+const GRADES = {
+  SAHIH_LI_DHATIHI: {
+    badge: "sahih", verdict: "Sahih li-dhatihi", verdict_ar: "صحيح لذاته", verdict_ur: "صحیح لذاتہ",
+    sub_en: "Sahih li-dhatihi (Authentic in itself - all 5 conditions fully met)",
+    sub_ar: "صحيح لذاته مستوفٍ للشروط الخمسة بتمام الضبط",
+    sub_ur: "صحیح لذاتہ - پانچوں شرائط کامل ضبط کے ساتھ پوری",
+    summary_en: "Unanimously authentic. Unbroken chain, upright narrators with complete retentive precision, free of anomaly and hidden defects.",
+    summary_ar: "صحيح بذاته؛ اتصال السند وعدالة الرواة وتمام الضبط والسلامة من الشذوذ والعلة.",
+    summary_ur: "بذاتہ صحیح؛ سند متصل، روات عادل اور کامل الضبط، شذوذ و علت سے پاک۔"
+  },
+  SAHIH_LI_GHAYRIHI: {
+    badge: "sahih", verdict: "Sahih li-ghayrihi", verdict_ar: "صحيح لغيره", verdict_ur: "صحیح لغیرہ",
+    sub_en: "Sahih li-ghayrihi (Authentic through corroboration - a Hasan li-dhatihi raised by supporting routes)",
+    sub_ar: "صحيح لغيره: حسن لذاته ارتقى إلى الصحة بتعدد الطرق",
+    sub_ur: "صحیح لغیرہ - حسن لذاتہ جو متعدد طرق سے صحیح کے درجے تک پہنچی",
+    summary_en: "On its own the chain is Hasan (narrators upright but of lighter precision). Independent supporting routes (Mutaba'at / Shawahid) lift it to the rank of Sahih.",
+    summary_ar: "إسناده حسن لذاته لخفة ضبط بعض رواته، فلما تعددت طرقه ارتقى إلى الصحيح لغيره.",
+    summary_ur: "تنہا سند حسن ہے (راوی عادل مگر ضبط میں خفیف)؛ متابعات و شواہد کی وجہ سے صحیح لغیرہ کے درجے کو پہنچی۔"
+  },
+  HASAN_LI_DHATIHI: {
+    badge: "hasan", verdict: "Hasan li-dhatihi", verdict_ar: "حسن لذاته", verdict_ur: "حسن لذاتہ",
+    sub_en: "Hasan li-dhatihi (Sound in itself - upright narrators of lighter precision)",
+    sub_ar: "حسن لذاته: رواته عدول مع خفة في الضبط",
+    sub_ur: "حسن لذاتہ - روات عادل مگر ضبط میں خفیف کمی",
+    summary_en: "Acceptable and usable as evidence. Chain is continuous and narrators upright, but at least one has slightly lighter retentive precision (Khafif al-Dabt).",
+    summary_ar: "حديث مقبول يحتج به؛ سنده متصل ورواته عدول لكن في بعضهم خفة في الضبط.",
+    summary_ur: "قابلِ حجت؛ سند متصل اور روات عادل مگر کسی راوی کے ضبط میں معمولی تخفیف ہے۔"
+  },
+  HASAN_LI_GHAYRIHI: {
+    badge: "hasan", verdict: "Hasan li-ghayrihi", verdict_ar: "حسن لغيره", verdict_ur: "حسن لغیرہ",
+    sub_en: "Hasan li-ghayrihi (Lightly weak in itself, strengthened to Hasan by supporting routes)",
+    sub_ar: "حسن لغيره: ضعيف ضعفاً يسيراً ارتقى إلى الحسن بتعدد الطرق",
+    sub_ur: "حسن لغیرہ - ہلکا ضعف جو متعدد طرق سے حسن کے درجے تک پہنچا",
+    summary_en: "The single chain has a light weakness (doubtful continuity such as Tadlis, or weak memory) but it is not a fabricator. Several independent routes strengthen it to Hasan.",
+    summary_ar: "في إسناده ضعف يسير (كشبهة تدليس أو سوء حفظ) غير شديد، وقد تقوى بتعدد الطرق فارتقى إلى الحسن لغيره.",
+    summary_ur: "تنہا سند میں ہلکا ضعف ہے (تدلیس کا شبہ یا کمزور حافظہ) مگر متعدد طرق سے تقویت پا کر حسن لغیرہ بنی۔"
+  },
+  DAIF: {
+    badge: "daif", verdict: "Da'if", verdict_ar: "ضعيف", verdict_ur: "ضعیف",
+    sub_en: "Da'if (Weak - fails one or more conditions of acceptance)",
+    sub_ar: "حديث ضعيف لفقده شرطاً من شروط القبول",
+    sub_ur: "ضعیف - قبولیت کی کوئی شرط مفقود ہے",
+    summary_en: "Fails the conditions of Sahih/Hasan: a broken chain, a weak or doubtful narrator, or an anomaly, with no corroboration to repair it.",
+    summary_ar: "لم يستوفِ شروط القبول؛ لانقطاع في السند أو ضعف راوٍ أو شذوذ، ولا ما يجبره من الطرق.",
+    summary_ur: "قبولیت کی شرائط پر پورا نہیں اترتی: سند میں انقطاع، راوی کا ضعف یا شذوذ ہے اور کوئی تقویت دینے والا طریق نہیں۔"
+  },
+  MAWDU: {
+    badge: "mawdu", verdict: "Mawdu'", verdict_ar: "موضوع", verdict_ur: "موضوع (من گھڑت)",
+    sub_en: "Mawdu' (Fabricated - falsely attributed to the Prophet)",
+    sub_ar: "حديث موضوع مكذوب لا أصل له",
+    sub_ur: "موضوع - من گھڑت اور بے بنیاد روایت",
+    summary_en: "Rejected with certainty. Contains a convicted fabricator or has no authentic prophetic chain at all.",
+    summary_ar: "مردود قطعاً؛ في إسناده وضّاع أو لا يُعرف له إسناد صحيح إلى رسول الله ﷺ.",
+    summary_ur: "قطعی طور پر مردود؛ سند میں جھوٹا راوی ہے یا رسول اللہ ﷺ تک کوئی صحیح سند نہیں۔"
+  }
+};
+
+function gradeLabel(code) {
+  const g = GRADES[code];
+  if (!g) return code;
+  return currentLang === "ar" ? g.verdict_ar : (currentLang === "ur" ? g.verdict_ur : g.verdict);
+}
+
+function determineGrade({ isFabricated, corroborated, statuses, dabtScore, adalahScore }) {
+  const [ittisal, adalah, dabt, shudhudh, illah] = statuses;
+  if (isFabricated) return "MAWDU";
+  if ([ittisal, adalah, shudhudh, illah].includes("FAIL")) return "DAIF";
+  if (dabt === "FAIL") {
+    return (corroborated && dabtScore >= 40 && adalahScore >= 70) ? "HASAN_LI_GHAYRIHI" : "DAIF";
+  }
+  if (statuses.includes("WARNING")) return corroborated ? "HASAN_LI_GHAYRIHI" : "DAIF";
+  if (dabtScore >= 90) return "SAHIH_LI_DHATIHI";
+  return corroborated ? "SAHIH_LI_GHAYRIHI" : "HASAN_LI_DHATIHI";
+}
+
+function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj, corroborated) {
   const isDirectFormula = (f) => {
     if (!f) return false;
     const str = f.toLowerCase();
@@ -183,40 +259,19 @@ function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj) {
     (illahScore * 0.10)
   );
 
-  // Verdict Determination
-  let verdict = "SAHIH";
-  let verdictAr = "صحيح";
-  let verdictUr = "صحیح";
-  let subEn = "Sahih li-dhatihi (Authentic unconditionally)";
-  let subAr = "صحيح لذاته مستوفٍ للشروط الخمسة";
-  let subUr = "صحیح لذاتہ - صحت کی پانچوں شرائط پر پورا";
-  let badgeClass = "sahih";
-
-  if (hasFabricator || hadithId === "hadith_hubb_al_watan") {
-    verdict = "MAWDU";
-    verdictAr = "موضوع";
-    verdictUr = "موضوع (من گھڑت)";
-    subEn = "Mawdu' (Fabricated / No authentic chain)";
-    subAr = "حديث موضوع مكذوب لا أصل له";
-    subUr = "موضوع - من گھڑت اور بے بنیاد روایت";
-    badgeClass = "mawdu";
-  } else if (ittisalStatus === "FAIL" || adalahStatus === "FAIL" || dabtStatus === "FAIL" || overallScore < 60) {
-    verdict = "DAIF";
-    verdictAr = "ضعيف";
-    verdictUr = "ضعیف";
-    subEn = "Da'if (Weak - Missing core authenticity conditions)";
-    subAr = "حديث ضعيف لفقده أحد شروط القبول";
-    subUr = "ضعیف - قبولیت کی شرائط مفقود ہیں";
-    badgeClass = "daif";
-  } else if (minMem < 90 || ittisalStatus === "WARNING" || illahStatus === "WARNING") {
-    verdict = "HASAN";
-    verdictAr = "حسن";
-    verdictUr = "حسن";
-    subEn = "Hasan (Sound and acceptable with fair precision)";
-    subAr = "حديث حسن مقبول يحتج به";
-    subUr = "حسن - قابلِ حجت و معتبر روایت";
-    badgeClass = "hasan";
-  }
+  // Verdict Determination (six classical grades)
+  const isFabricated = hasFabricator || hadithId === "hadith_hubb_al_watan";
+  const gradeCode = determineGrade({
+    isFabricated,
+    corroborated: !!corroborated,
+    statuses: [ittisalStatus, adalahStatus, dabtStatus, shudhudhStatus, illahStatus],
+    dabtScore: minMem,
+    adalahScore
+  });
+  const g = GRADES[gradeCode];
+  const verdict = g.verdict, verdictAr = g.verdict_ar, verdictUr = g.verdict_ur;
+  const subEn = g.sub_en, subAr = g.sub_ar, subUr = g.sub_ur;
+  const badgeClass = g.badge;
 
   // Node details for visualizer
   const chainNodes = (narratorIds || []).map((nid, idx) => {
@@ -232,6 +287,11 @@ function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj) {
   });
 
   return {
+    grade: gradeCode,
+    corroborated: !!corroborated,
+    summary_en: g.summary_en,
+    summary_ar: g.summary_ar,
+    summary_ur: g.summary_ur,
     verdict,
     verdict_ar: verdictAr,
     verdict_ur: verdictUr,

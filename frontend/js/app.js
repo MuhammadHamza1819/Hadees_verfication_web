@@ -101,7 +101,7 @@ function initPresets() {
     const title = currentLang === "ar" ? item.title_ar : (currentLang === "ur" ? item.title_ur : item.title_en);
 
     btn.innerHTML = `
-      <span class="preset-badge ${item.badge_class}">${item.known_verdict}</span>
+      <span class="preset-badge ${item.badge_class}">${gradeLabel(item.known_verdict)}</span>
       <span style="font-size: 0.85rem; font-weight: 600; line-height: 1.3;">${title}</span>
     `;
     container.appendChild(btn);
@@ -120,18 +120,86 @@ function selectPreset(presetId) {
   customChainNarrators = [...item.narrator_ids];
   customChainFormulas = [...item.transmission_formulas];
   chainDisplayNames = null;
+  fetchedMatn = null;
 
   const textInput = document.getElementById("hadithCustomTextInput");
   if (textInput) {
     textInput.value = item.matn_ar;
   }
+  chainSourceText = item.matn_ar;
+
+  const corroBox = document.getElementById("corroboratedCheck");
+  if (corroBox) corroBox.checked = !!item.corroborated;
 
   renderChainBuilder();
   runVerification();
 }
 
+// Text matching against the benchmark hadiths
+let chainSourceText = "";
+
+function normalizeText(t) {
+  return (t || "").toLowerCase()
+    .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findBenchmarkMatch(text) {
+  const n = normalizeText(text);
+  if (n.length < 10) return null;
+  for (const item of CORPUS_DATA) {
+    const fields = [item.matn_ar, item.matn_en, item.matn_ur, item.title_en, item.title_ar, item.title_ur];
+    for (const field of fields) {
+      const f = normalizeText(field);
+      if (f.length >= 10 && (n.includes(f) || f.includes(n))) return item;
+    }
+  }
+  return null;
+}
+
+function showNoBenchmarkMatch() {
+  const msgs = {
+    en: ["No matching benchmark hadith found", "This text does not match any benchmark hadith, so its chain and grade cannot be determined. Pick a benchmark hadith above, or fetch it by Book & Hadith Number."],
+    ar: ["لا يوجد حديث مطابق في الحديث المرجعي", "هذا النص لا يطابق أي حديث مرجعي، فلا يمكن تحديد سنده ودرجته. اختر حديثاً مرجعياً أو اجلبه باسم الكتاب ورقم الحديث."],
+    ur: ["کوئی مطابق بینچ مارک حدیث نہیں ملی", "یہ متن کسی بینچ مارک حدیث سے نہیں ملتا، اس لیے اس کی سند اور درجہ معلوم نہیں کیا جا سکتا۔ کوئی بینچ مارک حدیث منتخب کریں یا کتاب اور حدیث نمبر سے حاصل کریں۔"]
+  };
+  const [title, body] = msgs[currentLang] || msgs.en;
+  const heroEl = document.getElementById("verdictHeroContainer");
+  if (heroEl) {
+    heroEl.className = "verdict-hero daif";
+    heroEl.innerHTML = `<div class="verdict-badge-large"><div class="verdict-title"><span>${title}</span></div><div class="verdict-subtitle">${body}</div></div>`;
+  }
+  ["matnDisplayContainer", "rulesAuditListContainer", "sanadGraphContainer"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = "";
+  });
+}
+
+// Execute button: match typed text to a benchmark, then verify
+function executeVerification() {
+  const textInput = document.getElementById("hadithCustomTextInput");
+  const typed = textInput ? textInput.value.trim() : "";
+
+  if (typed && normalizeText(typed) !== normalizeText(chainSourceText)) {
+    const match = findBenchmarkMatch(typed);
+    if (match) {
+      selectPreset(match.id);
+    } else {
+      showNoBenchmarkMatch();
+    }
+    return;
+  }
+  runVerification();
+}
+
 // Chain display (read-only): shows the sanad of the selected hadith
 let chainDisplayNames = null;
+// Matn + translations of the hadith fetched by book & number (so language switches keep them)
+let fetchedMatn = null;
 
 const FORMULA_LABELS = {
   "haddathana": "حَدَّثَنَا (Haddathana)",
@@ -184,9 +252,12 @@ async function runVerification() {
   if (!resultCard) return;
 
   // Prepare custom or preset payload
-  const activeHadith = CORPUS_DATA.find(c => c.id === currentHadithId);
+  const activeHadith = CORPUS_DATA.find(c => c.id === currentHadithId) || (currentHadithId === "custom" ? fetchedMatn : null);
   const textInput = document.getElementById("hadithCustomTextInput");
   const customMatn = textInput && textInput.value.trim() ? textInput.value.trim() : (activeHadith ? activeHadith.matn_ar : "حديث شريف");
+
+  const corroBox = document.getElementById("corroboratedCheck");
+  const corroborated = corroBox ? corroBox.checked : false;
 
   let verificationResult = null;
 
@@ -200,6 +271,7 @@ async function runVerification() {
         chain_narrators: customChainNarrators,
         chain_formulas: customChainFormulas,
         matn_text: customMatn,
+        corroborated,
         language: currentLang
       })
     });
@@ -220,7 +292,7 @@ async function runVerification() {
       en: customMatn,
       ur: customMatn
     };
-    verificationResult = verifyHadithClientSide(customChainNarrators, customChainFormulas, currentHadithId, matnObj);
+    verificationResult = verifyHadithClientSide(customChainNarrators, customChainFormulas, currentHadithId, matnObj, corroborated);
   }
 
   renderVerificationResults(verificationResult, activeHadith);
@@ -241,7 +313,7 @@ function renderVerificationResults(res, activeHadith) {
         <span class="verdict-tag">${I18N[currentLang].verdict_label}</span>
         <div class="verdict-title">
           <span>${verdictText}</span>
-          <span style="font-size: 1.1rem; opacity: 0.85;">(${res.verdict})</span>
+          ${verdictText !== res.verdict ? `<span style="font-size: 1.1rem; opacity: 0.85;">(${res.verdict})</span>` : ""}
         </div>
         <div class="verdict-subtitle">${subVerdictText}</div>
       </div>
@@ -299,10 +371,10 @@ function renderVerificationResults(res, activeHadith) {
   // 4. Render Matn Display Box
   const matnContainer = document.getElementById("matnDisplayContainer");
   if (matnContainer) {
-    const matnAr = res.matn ? res.matn.ar : (activeHadith ? activeHadith.matn_ar : "");
-    const matnTrans = currentLang === "ur" ? 
-      (res.matn ? res.matn.ur : (activeHadith ? activeHadith.matn_ur : "")) :
-      (res.matn ? res.matn.en : (activeHadith ? activeHadith.matn_en : ""));
+    const matnAr = activeHadith ? activeHadith.matn_ar : (res.matn ? res.matn.ar : "");
+    const matnTrans = currentLang === "ur" ?
+      (activeHadith ? activeHadith.matn_ur : (res.matn ? res.matn.ur : "")) :
+      (activeHadith ? activeHadith.matn_en : (res.matn ? res.matn.en : ""));
 
     matnContainer.innerHTML = `
       <div class="matn-display-box">
@@ -362,7 +434,7 @@ function renderCorpusLibrary(query = "") {
     card.innerHTML = `
       <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-          <span class="preset-badge ${item.badge_class}">${item.known_verdict}</span>
+          <span class="preset-badge ${item.badge_class}">${gradeLabel(item.known_verdict)}</span>
           <span style="font-size: 0.8rem; color: var(--text-muted);">${item.book}</span>
         </div>
         <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary);">${title}</h4>
@@ -601,6 +673,18 @@ async function verifyFetchedIubHadith() {
   if (textInput) {
     textInput.value = lastFetchedIubData.arabic_text || "";
   }
+  chainSourceText = lastFetchedIubData.arabic_text || "";
+
+  const translations = lastFetchedIubData.urdu_translations || [];
+  const urduTrans = translations.find(t => /[\u0600-\u06FF]/.test(t.text)) || null;
+  const englishTrans = translations.find(t => !/[\u0600-\u06FF]/.test(t.text)) || null;
+  fetchedMatn = {
+    matn_ar: lastFetchedIubData.arabic_text || "",
+    matn_en: englishTrans ? englishTrans.text : "",
+    matn_ur: urduTrans ? urduTrans.text : ""
+  };
+  if (!fetchedMatn.matn_en) fetchedMatn.matn_en = currentLang === "en" ? "English translation is not available for this hadith." : fetchedMatn.matn_ar;
+  if (!fetchedMatn.matn_ur) fetchedMatn.matn_ur = "اس حدیث کا اردو ترجمہ دستیاب نہیں۔";
 
   try {
     const res = await fetch("/api/islamicurdubooks/import-and-verify", {
@@ -608,7 +692,8 @@ async function verifyFetchedIubHadith() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         book_id: bookId,
-        hadith_number: hadithNumber
+        hadith_number: hadithNumber,
+        corroborated: !!(document.getElementById("corroboratedCheck") || {}).checked
       })
     });
 
@@ -625,11 +710,7 @@ async function verifyFetchedIubHadith() {
         renderChainBuilder();
       }
       
-      renderVerificationResults(result.verification, {
-        matn_ar: lastFetchedIubData.arabic_text,
-        matn_en: lastFetchedIubData.arabic_text,
-        matn_ur: lastFetchedIubData.urdu_translations && lastFetchedIubData.urdu_translations[0] ? lastFetchedIubData.urdu_translations[0].text : lastFetchedIubData.arabic_text
-      });
+      renderVerificationResults(result.verification, fetchedMatn);
       return;
     }
   } catch (e) {

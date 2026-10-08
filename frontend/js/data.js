@@ -311,6 +311,82 @@ const NARRATORS_DATA = {
     "notes_en": "Known fabricator. Fabricated chains falsely attributed to Imam Malik.",
     "notes_ar": "كذاب وضاع يضع الأحاديث على مالك والثقات.",
     "notes_ur": "جھوٹا اور حدیث گھڑنے والا راوی۔"
+  },
+  "muhammad_ibn_amr_ibn_alqamah": {
+    "id": "muhammad_ibn_amr_ibn_alqamah",
+    "name_ar": "محمد بن عمرو بن علقمة الليثي",
+    "name_en": "Muhammad ibn Amr ibn Alqamah",
+    "name_ur": "محمد بن عمرو بن علقمہ لیثی",
+    "generation": "Wusta al-Tabi'in",
+    "generation_ar": "صدوق له أوهام",
+    "generation_ur": "صدوق، ضبط میں خفیف کمی",
+    "death_hijri": 144,
+    "city": "Madinah",
+    "reliability_tier": "saduq",
+    "integrity_score": 95,
+    "memory_score": 82,
+    "is_mudallis": false,
+    "mudallis_tier": 0,
+    "notes_en": "Truthful and upright, but with slightly lighter retentive precision. The classic example of a Hasan narrator.",
+    "notes_ar": "صدوق له أوهام؛ حديثه حسن، ومثّل به العلماء لحديث الحسن لذاته.",
+    "notes_ur": "سچے اور عادل مگر حافظہ میں خفیف کمی؛ حسن حدیث کے راوی کی کلاسیکی مثال۔"
+  },
+  "abu_salamah_ibn_abd_al_rahman": {
+    "id": "abu_salamah_ibn_abd_al_rahman",
+    "name_ar": "أبو سلمة بن عبد الرحمن بن عوف",
+    "name_en": "Abu Salamah ibn Abd al-Rahman",
+    "name_ur": "ابو سلمہ بن عبدالرحمٰن بن عوف",
+    "generation": "Wusta al-Tabi'in",
+    "generation_ar": "أحد الفقهاء السبعة",
+    "generation_ur": "مدینہ کے مشہور فقہاء میں سے",
+    "death_hijri": 94,
+    "city": "Madinah",
+    "reliability_tier": "thiqah_hafiz",
+    "integrity_score": 100,
+    "memory_score": 96,
+    "is_mudallis": false,
+    "mudallis_tier": 0,
+    "notes_en": "Eminent jurist of Madinah and a reliable narrator from Abu Hurayrah.",
+    "notes_ar": "ثقة إمام مكثر من الرواية عن أبي هريرة.",
+    "notes_ur": "مدینہ کے ثقہ فقیہ اور ابوہریرہ رضی اللہ عنہ سے کثیر روایت کرنے والے۔"
+  },
+  "bahz_ibn_hakim": {
+    "id": "bahz_ibn_hakim",
+    "name_ar": "بهز بن حكيم بن معاوية القشيري",
+    "name_en": "Bahz ibn Hakim al-Qushayri",
+    "name_ur": "بہز بن حکیم قشیری",
+    "generation": "Sughra al-Tabi'in",
+    "generation_ar": "صدوق",
+    "generation_ur": "صدوق، ضبط میں خفیف کمی",
+    "death_hijri": 145,
+    "city": "Basra",
+    "reliability_tier": "saduq",
+    "integrity_score": 95,
+    "memory_score": 80,
+    "is_mudallis": false,
+    "mudallis_tier": 0,
+    "notes_en": "Truthful narrator whose reports are graded Hasan; narrates from his father from his grandfather.",
+    "notes_ar": "صدوق حسن الحديث، روى عن أبيه عن جده.",
+    "notes_ur": "صدوق راوی، ان کی روایات حسن شمار ہوتی ہیں۔"
+  },
+  "muawiyah_ibn_haydah": {
+    "id": "muawiyah_ibn_haydah",
+    "name_ar": "معاوية بن حيدة القشيري",
+    "name_en": "Mu'awiyah ibn Haydah al-Qushayri",
+    "name_ur": "معاویہ بن حیدہ قشیری",
+    "generation": "Sahabi",
+    "generation_ar": "صحابي",
+    "generation_ur": "صحابی رسول",
+    "death_hijri": 60,
+    "city": "Basra",
+    "reliability_tier": "sahabi_adl",
+    "integrity_score": 100,
+    "memory_score": 100,
+    "is_mudallis": false,
+    "mudallis_tier": 0,
+    "notes_en": "Companion of the Prophet; all Companions are upright.",
+    "notes_ar": "صحابي جليل، والصحابة كلهم عدول.",
+    "notes_ur": "صحابی رسول؛ تمام صحابہ عادل ہیں۔"
   }
 };
 
@@ -335,7 +411,8 @@ const CORPUS_DATA = [
       "prophet_muhammad"
     ],
     "transmission_formulas": ["haddathana", "haddathana", "haddathana", "akhbarana", "sami'tu", "sami'tu", "sami'tu"],
-    "known_verdict": "SAHIH",
+    "known_verdict": "SAHIH_LI_DHATIHI",
+    "corroborated": false,
     "known_sub_verdict": "Sahih li-dhatihi (Muttafaq 'Alayh)",
     "badge_class": "sahih"
   },
@@ -356,9 +433,64 @@ const CORPUS_DATA = [
       "prophet_muhammad"
     ],
     "transmission_formulas": ["haddathana", "an", "an", "an"],
-    "known_verdict": "SAHIH",
+    "known_verdict": "SAHIH_LI_DHATIHI",
+    "corroborated": false,
     "known_sub_verdict": "Sahih li-dhatihi (Golden Chain)",
     "badge_class": "sahih"
+  },
+  {
+    "id": "hadith_siwak",
+    "title_en": "Siwak Before Every Prayer (Law la an ashuqqa)",
+    "title_ar": "حديث: لولا أن أشق على أمتي لأمرتهم بالسواك",
+    "title_ur": "حدیث: اگر امت پر مشقت کا اندیشہ نہ ہوتا تو مسواک کا حکم دیتا",
+    "book": "Sunan al-Tirmidhi #22 / Sahih al-Bukhari #887",
+    "matn_ar": "لَوْلَا أَنْ أَشُقَّ عَلَى أُمَّتِي لَأَمَرْتُهُمْ بِالسِّوَاكِ مَعَ كُلِّ صَلَاةٍ.",
+    "matn_en": "Were it not that I would burden my nation, I would have commanded them to use the siwak with every prayer.",
+    "matn_ur": "اگر مجھے اپنی امت پر مشقت کا اندیشہ نہ ہوتا تو میں انہیں ہر نماز کے ساتھ مسواک کا حکم دیتا۔",
+    "narrator_ids": [
+      "al_tirmidhi",
+      "muhammad_ibn_amr_ibn_alqamah",
+      "abu_salamah_ibn_abd_al_rahman",
+      "abu_hurayrah",
+      "prophet_muhammad"
+    ],
+    "transmission_formulas": [
+      "haddathana",
+      "an",
+      "an",
+      "an"
+    ],
+    "known_verdict": "SAHIH_LI_GHAYRIHI",
+    "corroborated": true,
+    "known_sub_verdict": "Sahih li-ghayrihi (Hasan chain raised by supporting routes)",
+    "badge_class": "sahih"
+  },
+  {
+    "id": "hadith_mother_first",
+    "title_en": "Your Mother, then Your Mother (Man abarru?)",
+    "title_ar": "حديث: من أبر؟ قال: أمك",
+    "title_ur": "حدیث: میں کس سے نیکی کروں؟ فرمایا: اپنی ماں سے",
+    "book": "Sunan Abi Dawud #5139 / Sunan al-Tirmidhi #1897",
+    "matn_ar": "قُلْتُ: يَا رَسُولَ اللَّهِ، مَنْ أَبَرُّ؟ قَالَ: أُمَّكَ، ثُمَّ أُمَّكَ، ثُمَّ أُمَّكَ، ثُمَّ أَبَاكَ، ثُمَّ الْأَقْرَبَ فَالْأَقْرَبَ.",
+    "matn_en": "I said: O Messenger of Allah, to whom should I show kindness? He said: Your mother, then your mother, then your mother, then your father, then the nearest and the next nearest.",
+    "matn_ur": "میں نے پوچھا: اے اللہ کے رسول! میں کس کے ساتھ نیکی کروں؟ فرمایا: اپنی ماں کے ساتھ، پھر ماں کے ساتھ، پھر ماں کے ساتھ، پھر باپ کے ساتھ، پھر قریب ترین رشتہ داروں کے ساتھ۔",
+    "narrator_ids": [
+      "abu_dawud",
+      "musaddad",
+      "bahz_ibn_hakim",
+      "muawiyah_ibn_haydah",
+      "prophet_muhammad"
+    ],
+    "transmission_formulas": [
+      "haddathana",
+      "an",
+      "an",
+      "an"
+    ],
+    "known_verdict": "HASAN_LI_DHATIHI",
+    "corroborated": false,
+    "known_sub_verdict": "Hasan li-dhatihi (Sound chain with a lighter-precision narrator)",
+    "badge_class": "hasan"
   },
   {
     "id": "hadith_talab_ilm",
@@ -376,7 +508,8 @@ const CORPUS_DATA = [
       "prophet_muhammad"
     ],
     "transmission_formulas": ["haddathana", "an", "an"],
-    "known_verdict": "HASAN",
+    "known_verdict": "HASAN_LI_GHAYRIHI",
+    "corroborated": true,
     "known_sub_verdict": "Hasan li-ghayrihi (Strengthened routes)",
     "badge_class": "hasan"
   },
@@ -396,6 +529,7 @@ const CORPUS_DATA = [
     ],
     "transmission_formulas": ["an", "an"],
     "known_verdict": "DAIF",
+    "corroborated": false,
     "known_sub_verdict": "Da'if Jiddan / Batil (Severely Weak)",
     "badge_class": "daif"
   },
@@ -417,6 +551,7 @@ const CORPUS_DATA = [
     ],
     "transmission_formulas": ["an", "an", "an", "an"],
     "known_verdict": "MAWDU",
+    "corroborated": false,
     "known_sub_verdict": "Mawdu' / La Asla Lahu (Fabricated)",
     "badge_class": "mawdu"
   }

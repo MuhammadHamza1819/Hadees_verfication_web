@@ -55,10 +55,14 @@ class VerificationRequest(BaseModel):
     chain_narrators: Optional[List[str]] = None
     chain_formulas: Optional[List[str]] = None
     matn_text: Optional[str] = None
+    corroborated: Optional[bool] = None
     language: Optional[str] = "en"
 
 class VerificationResponse(BaseModel):
-    verdict: str  # SAHIH, HASAN, DAIF, MAWDU
+    grade: str = ""  # SAHIH_LI_DHATIHI, SAHIH_LI_GHAYRIHI, HASAN_LI_DHATIHI, HASAN_LI_GHAYRIHI, DAIF, MAWDU
+    badge_class: str = "sahih"
+    corroborated: bool = False
+    verdict: str
     verdict_ar: str
     verdict_ur: str
     sub_verdict_en: str
@@ -93,7 +97,8 @@ class HadithCorpusItem(BaseModel):
     matn_ur: str
     narrator_ids: List[str]
     transmission_formulas: List[str]
-    known_verdict: str  # SAHIH, HASAN, DAIF, MAWDU
+    known_verdict: str  # SAHIH_LI_DHATIHI, SAHIH_LI_GHAYRIHI, HASAN_LI_DHATIHI, HASAN_LI_GHAYRIHI, DAIF, MAWDU
+    corroborated: bool = False
     known_sub_verdict: str
     ruling_summary_en: str
     ruling_summary_ar: str
