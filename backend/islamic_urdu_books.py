@@ -9,6 +9,8 @@ import json
 import logging
 import asyncio
 from typing import Dict, Any, List, Optional
+import tempfile
+
 import httpx
 from bs4 import BeautifulSoup
 
@@ -17,7 +19,12 @@ from backend.rijal_database import RIJAL_DATABASE
 logger = logging.getLogger(__name__)
 
 CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "cache_islamicurdubooks")
-os.makedirs(CACHE_DIR, exist_ok=True)
+try:
+    os.makedirs(CACHE_DIR, exist_ok=True)
+except OSError:
+    # Read-only deployment (e.g. Vercel): fall back to the writable temp directory
+    CACHE_DIR = os.path.join(tempfile.gettempdir(), "cache_islamicurdubooks")
+    os.makedirs(CACHE_DIR, exist_ok=True)
 
 ISLAMIC_URDU_BOOKS = [
     {
