@@ -417,28 +417,6 @@ const CORPUS_DATA = [
     "badge_class": "sahih"
   },
   {
-    "id": "hadith_golden_chain",
-    "title_en": "The Golden Chain (Silsilat al-Dhahab) - Brotherly Love",
-    "title_ar": "سلسلة الذهب: حديث محبة الخير للمسلم",
-    "title_ur": "سلسلۃ الذہب: مسلمان بھائی کے لیے خیر خواہی",
-    "book": "Al-Muwatta & Sahih al-Bukhari #13",
-    "matn_ar": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ مِنَ الْخَيْرِ.",
-    "matn_en": "None of you truly believes until he loves for his brother what he loves for himself.",
-    "matn_ur": "تم میں سے کوئی شخص اس وقت تک مومن نہیں ہو سکتا جب تک اپنے بھائی کے لیے وہی پسند نہ کرے جو اپنے لیے کرتا ہے۔",
-    "narrator_ids": [
-      "al_bukhari",
-      "malik_ibn_anas",
-      "nafi_mawla_ibn_umar",
-      "abdullah_ibn_umar",
-      "prophet_muhammad"
-    ],
-    "transmission_formulas": ["haddathana", "an", "an", "an"],
-    "known_verdict": "SAHIH_LI_DHATIHI",
-    "corroborated": false,
-    "known_sub_verdict": "Sahih li-dhatihi (Golden Chain)",
-    "badge_class": "sahih"
-  },
-  {
     "id": "hadith_siwak",
     "title_en": "Siwak Before Every Prayer (Law la an ashuqqa)",
     "title_ar": "حديث: لولا أن أشق على أمتي لأمرتهم بالسواك",

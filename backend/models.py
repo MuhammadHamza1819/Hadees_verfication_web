@@ -61,6 +61,7 @@ class VerificationRequest(BaseModel):
 class VerificationResponse(BaseModel):
     grade: str = ""  # SAHIH_LI_DHATIHI, SAHIH_LI_GHAYRIHI, HASAN_LI_DHATIHI, HASAN_LI_GHAYRIHI, DAIF, MAWDU
     badge_class: str = "sahih"
+    grade_reasons: List[Dict[str, Any]] = []
     corroborated: bool = False
     verdict: str
     verdict_ar: str

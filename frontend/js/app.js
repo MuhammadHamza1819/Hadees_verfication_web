@@ -298,6 +298,41 @@ async function runVerification() {
   renderVerificationResults(verificationResult, activeHadith);
 }
 
+// "Why this grade": the weak points found, and whether supporting routes repaired them
+function renderGradeReasons(res) {
+  const el = document.getElementById("gradeReasonsContainer");
+  if (!el) return;
+  const reasons = res.grade_reasons || [];
+  if (reasons.length === 0) {
+    el.innerHTML = "";
+    return;
+  }
+
+  const pick = (item, field) => item[`${field}_${currentLang}`] || item[`${field}_en`] || "";
+  const icons = { ok: "✓", issue: "✕", note: "!", fixed: "🔧", info: "ℹ", hint: "💡", severe: "⛔" };
+
+  const itemsHtml = reasons.map(item => {
+    const kind = item.kind === "issue" && item.status === "WARNING" ? "note" : item.kind;
+    const details = (item[`details_${currentLang}`] || item.details_en || []).map(d => `<li>${d}</li>`).join("");
+    const body = pick(item, "body");
+    return `
+      <div class="reason-item ${kind}">
+        <div class="reason-icon">${icons[kind] || "•"}</div>
+        <div class="reason-content">
+          <div class="reason-title">${pick(item, "title")}${item.score !== undefined && item.rule_id ? ` <span class="reason-score">${item.score}%</span>` : ""}</div>
+          ${details ? `<ul class="reason-details">${details}</ul>` : ""}
+          ${body ? `<p class="reason-body">${body}</p>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+
+  el.innerHTML = `
+    <div class="grade-reasons-card">
+      <div class="grade-reasons-heading">${I18N[currentLang].why_grade_heading}</div>
+      ${itemsHtml}
+    </div>`;
+}
+
 // Render Results View
 function renderVerificationResults(res, activeHadith) {
   const badgeClass = res.badge_class || (res.verdict ? res.verdict.toLowerCase() : "sahih");
@@ -327,6 +362,8 @@ function renderVerificationResults(res, activeHadith) {
       </div>
     `;
   }
+
+  renderGradeReasons(res);
 
   // 2. The 5 Rules Audit List
   const rulesListEl = document.getElementById("rulesAuditListContainer");
@@ -521,39 +558,54 @@ function updateActiveViewTranslations() {
 let lastFetchedIubData = null;
 let iubCollectionsList = [];
 
-// Dynamically fetch and populate collections from GET /api/islamicurdubooks/books
+// Load the collections from GET /api/islamicurdubooks/books and show each as a button
 async function loadIubBooksList() {
-  const bookSelect = document.getElementById("iubBookSelect");
-  if (!bookSelect) return;
+  const bookInput = document.getElementById("iubBookSelect");
+  const grid = document.getElementById("iubBookButtons");
+  if (!bookInput || !grid) return;
 
-  try {
-    const res = await fetch("/api/islamicurdubooks/books");
-    if (res.ok) {
-      iubCollectionsList = await res.json();
+  if (iubCollectionsList.length === 0) {
+    try {
+      const res = await fetch("/api/islamicurdubooks/books");
+      if (res.ok) iubCollectionsList = await res.json();
+    } catch (e) {
+      // handled below
     }
-  } catch (e) {
-    // Fail-safe default collections
   }
 
-  if (!iubCollectionsList || iubCollectionsList.length === 0) {
-    iubCollectionsList = [
-      { id: 1, name_ar: "صحيح البخاري", name_ur: "صحیح بخاری", name_en: "Sahih al-Bukhari", total_hadiths: 7563 },
-      { id: 2, name_ar: "صحيح مسلم", name_ur: "صحیح مسلم", name_en: "Sahih Muslim", total_hadiths: 7563 },
-      { id: 3, name_ar: "سنن أبي داود", name_ur: "سنن ابی داؤد", name_en: "Sunan Abi Dawud", total_hadiths: 5274 },
-      { id: 4, name_ar: "سنن ابن ماجه", name_ur: "سنن ابن ماجہ", name_en: "Sunan Ibn Majah", total_hadiths: 4341 },
-      { id: 5, name_ar: "سنن النسائي", name_ur: "سنن نسائی", name_en: "Sunan an-Nasa'i", total_hadiths: 5758 },
-      { id: 6, name_ar: "جامع الترمذي", name_ur: "جامع ترمذی", name_en: "Jami' at-Tirmidhi", total_hadiths: 3956 },
-      { id: 7, name_ar: "مشكاة المصابيح", name_ur: "مشکوٰۃ المصابیح", name_en: "Mishkat al-Masabih", total_hadiths: 6294 },
-      { id: 8, name_ar: "مسند أحمد بن حنبل", name_ur: "مسند احمد بن حنبل", name_en: "Musnad Ahmad", total_hadiths: 27647 }
-    ];
+  if (iubCollectionsList.length === 0) {
+    grid.innerHTML = `<span class="book-load-error">${currentLang === 'ur' ? 'کتابوں کی فہرست حاصل نہیں ہو سکی۔' : (currentLang === 'ar' ? 'تعذر تحميل قائمة الكتب.' : 'Could not load the list of books.')}</span>`;
+    return;
   }
 
-  const selectedVal = bookSelect.value || "1";
-  bookSelect.innerHTML = iubCollectionsList.map(b => {
+  if (!iubCollectionsList.some(b => b.id.toString() === bookInput.value)) {
+    bookInput.value = iubCollectionsList[0].id;
+  }
+  renderIubBookButtons();
+}
+
+function renderIubBookButtons() {
+  const bookInput = document.getElementById("iubBookSelect");
+  const grid = document.getElementById("iubBookButtons");
+  if (!bookInput || !grid) return;
+
+  grid.innerHTML = "";
+  iubCollectionsList.forEach(b => {
     const bookName = currentLang === 'ar' ? b.name_ar : (currentLang === 'ur' ? b.name_ur : b.name_en);
-    const countStr = b.total_hadiths ? ` (${b.total_hadiths.toLocaleString()} ${currentLang === 'ur' ? 'احادیث' : (currentLang === 'ar' ? 'حديثاً' : 'Hadiths')})` : '';
-    return `<option value="${b.id}" ${b.id.toString() === selectedVal.toString() ? 'selected' : ''}>${b.id}. ${bookName}${countStr}</option>`;
-  }).join('');
+    const countStr = b.total_hadiths ? `${b.total_hadiths.toLocaleString()} ${currentLang === 'ur' ? 'احادیث' : (currentLang === 'ar' ? 'حديثاً' : 'Hadiths')}` : '';
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "book-btn" + (b.id.toString() === bookInput.value ? " active" : "");
+    btn.innerHTML = `<span class="book-btn-name">${bookName}</span><span class="book-btn-count">${countStr}</span>`;
+    btn.onclick = () => selectIubBook(b.id);
+    grid.appendChild(btn);
+  });
+}
+
+function selectIubBook(bookId) {
+  const bookInput = document.getElementById("iubBookSelect");
+  if (bookInput) bookInput.value = bookId;
+  renderIubBookButtons();
 }
 
 // Fetch from GET /api/islamicurdubooks/fetch?book_id={id}&hadith_number={no}
@@ -599,14 +651,6 @@ async function fetchFromIslamicUrduBooks() {
     if (spinner) spinner.style.display = "none";
     if (btn) btn.disabled = false;
   }
-}
-
-function setIubQuick(bookId, hadithNumber) {
-  const bookSelect = document.getElementById("iubBookSelect");
-  const numInput = document.getElementById("iubHadithNumInput");
-  if (bookSelect) bookSelect.value = bookId;
-  if (numInput) numInput.value = hadithNumber;
-  fetchFromIslamicUrduBooks();
 }
 
 function renderIubHadithCard(data) {

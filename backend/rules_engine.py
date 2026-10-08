@@ -507,6 +507,127 @@ def determine_grade(rules: List[RuleAuditItem], is_fabricated: bool, corroborate
     return "SAHIH_LI_GHAYRIHI" if corroborated else "HASAN_LI_DHATIHI"
 
 
+# Localised explanations used to say WHY a hadith received its grade
+REASON_TEXT: Dict[str, Dict[str, str]] = {
+    "ok_title": {
+        "en": "All five conditions are fully met",
+        "ar": "استوفى الشروط الخمسة كاملة",
+        "ur": "پانچوں شرائط مکمل طور پر پوری ہیں",
+    },
+    "fixed_title": {
+        "en": "The weakness is repaired by supporting routes",
+        "ar": "جُبر الضعف بتعدد الطرق",
+        "ur": "کمزوری کو متعدد طرق نے دور کر دیا",
+    },
+    "fixed_body": {
+        "en": "The issue(s) above exist only in this single chain. The hadith is also reported through independent supporting routes (Mutaba'at / Shawahid), so the weakness is compensated and it rises to {grade}.",
+        "ar": "الضعف المذكور أعلاه في هذا الإسناد وحده، وقد رُوي الحديث من طرق مستقلة أخرى (متابعات وشواهد) فانجبر الضعف وارتقى إلى {grade}.",
+        "ur": "اوپر مذکور کمزوری صرف اسی ایک سند میں ہے۔ یہی حدیث دیگر آزاد طرق (متابعات و شواہد) سے بھی مروی ہے، اس لیے کمزوری دور ہو گئی اور یہ {grade} کے درجے تک پہنچ گئی۔",
+    },
+    "hasan_title": {
+        "en": "Why Hasan and not Sahih",
+        "ar": "لماذا حسن وليس صحيحاً",
+        "ur": "حسن کیوں ہے، صحیح کیوں نہیں",
+    },
+    "hasan_body": {
+        "en": "The chain is continuous and every narrator is upright, but at least one narrator's memory is lighter than the Sahih standard (below 90%). That lighter precision (Khafif al-Dabt) places it at Hasan. If independent supporting routes exist, tick the supporting-routes box to see it rise to Sahih li-ghayrihi.",
+        "ar": "السند متصل والرواة عدول، لكن في أحدهم خفة ضبط دون معيار الصحيح (أقل من 90%)، فنزل إلى رتبة الحسن. فإن وُجدت طرق مستقلة تعضده فعلّم خانة الطرق ليرتقي إلى صحيح لغيره.",
+        "ur": "سند متصل اور تمام روات عادل ہیں مگر کسی راوی کا حافظہ صحیح کے معیار (90 فیصد) سے ہلکا ہے، اس لیے یہ حسن کے درجے پر ہے۔ اگر اسے تقویت دینے والے آزاد طرق موجود ہوں تو 'تائیدی طرق' کا خانہ منتخب کریں، یہ صحیح لغیرہ بن جائے گی۔",
+    },
+    "hint_title": {
+        "en": "Could be repaired by supporting routes",
+        "ar": "قد ينجبر بتعدد الطرق",
+        "ur": "تائیدی طرق سے کمزوری دور ہو سکتی ہے",
+    },
+    "hint_body": {
+        "en": "The weakness above is light (not a fabricator or a broken chain). On its own this chain is Da'if, but if independent supporting routes (Mutaba'at / Shawahid) exist, tick the supporting-routes box and it rises to Hasan li-ghayrihi.",
+        "ar": "الضعف أعلاه يسير (ليس وضعاً ولا انقطاعاً). فالإسناد وحده ضعيف، فإن وُجدت طرق مستقلة (متابعات وشواهد) فعلّم خانة الطرق ليرتقي إلى حسن لغيره.",
+        "ur": "اوپر مذکور کمزوری ہلکی ہے (نہ من گھڑت راوی ہے نہ سند ٹوٹی ہوئی)۔ تنہا یہ سند ضعیف ہے، لیکن اگر آزاد تائیدی طرق (متابعات و شواہد) موجود ہوں تو 'تائیدی طرق' کا خانہ منتخب کریں، یہ حسن لغیرہ بن جائے گی۔",
+    },
+    "severe_title": {
+        "en": "A weakness that supporting routes cannot repair",
+        "ar": "ضعف شديد لا ينجبر بتعدد الطرق",
+        "ur": "ایسی کمزوری جو تائیدی طرق سے دور نہیں ہوتی",
+    },
+    "severe_body": {
+        "en": "The defect above (a broken chain, an unreliable or abandoned narrator, an anomaly or a hidden defect) is too serious to be compensated by other routes, so the hadith stays Da'if.",
+        "ar": "العلة المذكورة (انقطاع أو راوٍ ضعيف جداً أو شذوذ أو علة خفية) أشد من أن تنجبر بتعدد الطرق، فيبقى الحديث ضعيفاً.",
+        "ur": "اوپر مذکور خرابی (سند کا انقطاع، انتہائی کمزور یا متروک راوی، شذوذ یا پوشیدہ علت) اتنی شدید ہے کہ دوسرے طرق اسے دور نہیں کر سکتے، اس لیے حدیث ضعیف ہی رہتی ہے۔",
+    },
+    "fabricated_title": {
+        "en": "A fabricator cannot be repaired",
+        "ar": "الوضع لا ينجبر",
+        "ur": "من گھڑت روایت کی تلافی نہیں ہوتی",
+    },
+    "fabricated_body": {
+        "en": "The chain contains a convicted fabricator (or has no authentic prophetic chain at all). No number of other routes can repair a fabrication, so the hadith is rejected as Mawdu'.",
+        "ar": "في الإسناد وضّاع (أو لا إسناد صحيح له أصلاً). والوضع لا ينجبر بكثرة الطرق، فالحديث مردود موضوع.",
+        "ur": "سند میں جھوٹی حدیثیں گھڑنے والا راوی ہے (یا رسول اللہ ﷺ تک کوئی صحیح سند ہی نہیں)۔ من گھڑت روایت کو طرق کی کثرت درست نہیں کرتی، اس لیے حدیث موضوع ہو کر مردود ہے۔",
+    },
+}
+
+
+def _reason(kind: str, title_key: str, body_key: str = None, grade_code: str = None, details: Dict[str, List[str]] = None) -> Dict[str, Any]:
+    item: Dict[str, Any] = {"kind": kind}
+    for lang in ("en", "ar", "ur"):
+        item["title_" + lang] = REASON_TEXT[title_key][lang]
+        body = ""
+        if body_key:
+            body = REASON_TEXT[body_key][lang]
+            if grade_code:
+                g = GRADES[grade_code]
+                label = {"en": g["verdict"], "ar": g["verdict_ar"], "ur": g["verdict_ur"]}[lang]
+                body = body.replace("{grade}", label)
+        item["body_" + lang] = body
+        item["details_" + lang] = (details or {}).get(lang, [])
+    return item
+
+
+def build_grade_reasons(grade_code: str, rules: List[RuleAuditItem], corroborated: bool) -> List[Dict[str, Any]]:
+    """Explain why the hadith got its grade: which rules were weak, and whether corroboration repaired it."""
+    by_id = {r.rule_id: r for r in rules}
+    items: List[Dict[str, Any]] = []
+
+    # 1. The weak points found in the chain, taken from the rule audits themselves
+    for r in rules:
+        weak = r.status != "PASS" or (r.rule_id == "dabt" and r.score < 90)
+        if not weak:
+            continue
+        item: Dict[str, Any] = {
+            "kind": "issue" if r.status != "PASS" else "note",
+            "rule_id": r.rule_id,
+            "status": r.status,
+            "score": r.score,
+        }
+        for lang in ("en", "ar", "ur"):
+            item["title_" + lang] = getattr(r, "rule_name_" + lang)
+            item["body_" + lang] = ""
+            item["details_" + lang] = list(getattr(r, "details_" + lang))
+        items.append(item)
+
+    if grade_code == "SAHIH_LI_DHATIHI":
+        names = {lang: [getattr(r, "rule_name_" + lang) for r in rules] for lang in ("en", "ar", "ur")}
+        items.append(_reason("ok", "ok_title", details=names))
+    elif grade_code in ("SAHIH_LI_GHAYRIHI", "HASAN_LI_GHAYRIHI"):
+        items.append(_reason("fixed", "fixed_title", "fixed_body", grade_code))
+    elif grade_code == "HASAN_LI_DHATIHI":
+        items.append(_reason("info", "hasan_title", "hasan_body"))
+    elif grade_code == "MAWDU":
+        items.append(_reason("severe", "fabricated_title", "fabricated_body"))
+    else:  # DAIF
+        dabt, adalah = by_id["dabt"], by_id["adalah"]
+        hard_fail = any(r.status == "FAIL" and r.rule_id != "dabt" for r in rules)
+        light = not hard_fail and (
+            (dabt.status == "FAIL" and dabt.score >= 40 and adalah.score >= 70)
+            or (dabt.status != "FAIL" and any(r.status == "WARNING" for r in rules))
+        )
+        if light and not corroborated:
+            items.append(_reason("hint", "hint_title", "hint_body"))
+        else:
+            items.append(_reason("severe", "severe_title", "severe_body"))
+    return items
+
+
 def verify_hadith(
     narrator_ids: List[str],
     formulas: List[str],
@@ -581,6 +702,7 @@ def verify_hadith(
 
     return VerificationResponse(
         grade=grade_code,
+        grade_reasons=build_grade_reasons(grade_code, rules, corroborated),
         badge_class=g["badge"],
         corroborated=corroborated,
         verdict=verdict,

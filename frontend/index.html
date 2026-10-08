@@ -82,16 +82,8 @@
 
           <div class="form-group">
             <label class="form-label" data-i18n="iub_select_book">Select Hadith Collection:</label>
-            <select id="iubBookSelect" class="form-textarea" style="min-height: auto; padding: 0.65rem 0.85rem;">
-              <option value="1">1. صحيح البخاري (Sahih al-Bukhari) - 7,563 Hadiths</option>
-              <option value="2">2. صحيح مسلم (Sahih Muslim) - 7,563 Hadiths</option>
-              <option value="3">3. سنن أبي داود (Sunan Abi Dawud) - 5,274 Hadiths</option>
-              <option value="4">4. سنن ابن ماجه (Sunan Ibn Majah) - 4,341 Hadiths</option>
-              <option value="5">5. سنن النسائي (Sunan an-Nasa'i) - 5,758 Hadiths</option>
-              <option value="6">6. جامع الترمذي (Jami' at-Tirmidhi) - 3,956 Hadiths</option>
-              <option value="7">7. مشكاة المصابيح (Mishkat al-Masabih) - 6,294 Hadiths</option>
-              <option value="8">8. مسند أحمد (Musnad Ahmad) - 27,647 Hadiths</option>
-            </select>
+            <input type="hidden" id="iubBookSelect" value="">
+            <div class="book-buttons-grid" id="iubBookButtons"></div>
           </div>
 
           <div class="form-group">
@@ -102,22 +94,6 @@
                 <span id="iubFetchSpinner" style="display: none;">⏳</span>
                 <span data-i18n="iub_fetch_btn">Fetch Hadith</span>
               </button>
-            </div>
-          </div>
-
-          <!-- Quick Chips -->
-          <div style="margin-bottom: 1.25rem;">
-            <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;" data-i18n="iub_quick_samples">Quick Benchmarks:</span>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(1, 1)">Bukhari #1 (Niyyah)</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(1, 13)">Bukhari #13 (Faith)</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(2, 1)">Muslim #1 (Jibril)</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(3, 1)">Abu Dawud #1</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(4, 1)">Tirmidhi #1</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(5, 1)">Nasai #1</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(6, 1)">Ibn Majah #1</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(7, 1)">Muwatta Malik #1</button>
-              <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(8, 1)">40 Nawawi #1</button>
             </div>
           </div>
       </div>
@@ -178,6 +154,9 @@
             
             <!-- Verdict Hero -->
             <div id="verdictHeroContainer"></div>
+
+            <!-- Why this grade -->
+            <div id="gradeReasonsContainer"></div>
 
             <!-- Matn Display Box -->
             <div id="matnDisplayContainer"></div>

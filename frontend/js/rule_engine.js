@@ -79,6 +79,96 @@ function determineGrade({ isFabricated, corroborated, statuses, dabtScore, adala
   return corroborated ? "SAHIH_LI_GHAYRIHI" : "HASAN_LI_DHATIHI";
 }
 
+// Localised explanations of WHY a hadith got its grade (mirrors backend REASON_TEXT)
+const REASON_TEXT = {
+  ok_title: { en: "All five conditions are fully met", ar: "استوفى الشروط الخمسة كاملة", ur: "پانچوں شرائط مکمل طور پر پوری ہیں" },
+  fixed_title: { en: "The weakness is repaired by supporting routes", ar: "جُبر الضعف بتعدد الطرق", ur: "کمزوری کو متعدد طرق نے دور کر دیا" },
+  fixed_body: {
+    en: "The issue(s) above exist only in this single chain. The hadith is also reported through independent supporting routes (Mutaba'at / Shawahid), so the weakness is compensated and it rises to {grade}.",
+    ar: "الضعف المذكور أعلاه في هذا الإسناد وحده، وقد رُوي الحديث من طرق مستقلة أخرى (متابعات وشواهد) فانجبر الضعف وارتقى إلى {grade}.",
+    ur: "اوپر مذکور کمزوری صرف اسی ایک سند میں ہے۔ یہی حدیث دیگر آزاد طرق (متابعات و شواہد) سے بھی مروی ہے، اس لیے کمزوری دور ہو گئی اور یہ {grade} کے درجے تک پہنچ گئی۔"
+  },
+  hasan_title: { en: "Why Hasan and not Sahih", ar: "لماذا حسن وليس صحيحاً", ur: "حسن کیوں ہے، صحیح کیوں نہیں" },
+  hasan_body: {
+    en: "The chain is continuous and every narrator is upright, but at least one narrator's memory is lighter than the Sahih standard (below 90%). That lighter precision (Khafif al-Dabt) places it at Hasan. If independent supporting routes exist, tick the supporting-routes box to see it rise to Sahih li-ghayrihi.",
+    ar: "السند متصل والرواة عدول، لكن في أحدهم خفة ضبط دون معيار الصحيح (أقل من 90%)، فنزل إلى رتبة الحسن. فإن وُجدت طرق مستقلة تعضده فعلّم خانة الطرق ليرتقي إلى صحيح لغيره.",
+    ur: "سند متصل اور تمام روات عادل ہیں مگر کسی راوی کا حافظہ صحیح کے معیار (90 فیصد) سے ہلکا ہے، اس لیے یہ حسن کے درجے پر ہے۔ اگر اسے تقویت دینے والے آزاد طرق موجود ہوں تو 'تائیدی طرق' کا خانہ منتخب کریں، یہ صحیح لغیرہ بن جائے گی۔"
+  },
+  hint_title: { en: "Could be repaired by supporting routes", ar: "قد ينجبر بتعدد الطرق", ur: "تائیدی طرق سے کمزوری دور ہو سکتی ہے" },
+  hint_body: {
+    en: "The weakness above is light (not a fabricator or a broken chain). On its own this chain is Da'if, but if independent supporting routes (Mutaba'at / Shawahid) exist, tick the supporting-routes box and it rises to Hasan li-ghayrihi.",
+    ar: "الضعف أعلاه يسير (ليس وضعاً ولا انقطاعاً). فالإسناد وحده ضعيف، فإن وُجدت طرق مستقلة (متابعات وشواهد) فعلّم خانة الطرق ليرتقي إلى حسن لغيره.",
+    ur: "اوپر مذکور کمزوری ہلکی ہے (نہ من گھڑت راوی ہے نہ سند ٹوٹی ہوئی)۔ تنہا یہ سند ضعیف ہے، لیکن اگر آزاد تائیدی طرق (متابعات و شواہد) موجود ہوں تو 'تائیدی طرق' کا خانہ منتخب کریں، یہ حسن لغیرہ بن جائے گی۔"
+  },
+  severe_title: { en: "A weakness that supporting routes cannot repair", ar: "ضعف شديد لا ينجبر بتعدد الطرق", ur: "ایسی کمزوری جو تائیدی طرق سے دور نہیں ہوتی" },
+  severe_body: {
+    en: "The defect above (a broken chain, an unreliable or abandoned narrator, an anomaly or a hidden defect) is too serious to be compensated by other routes, so the hadith stays Da'if.",
+    ar: "العلة المذكورة (انقطاع أو راوٍ ضعيف جداً أو شذوذ أو علة خفية) أشد من أن تنجبر بتعدد الطرق، فيبقى الحديث ضعيفاً.",
+    ur: "اوپر مذکور خرابی (سند کا انقطاع، انتہائی کمزور یا متروک راوی، شذوذ یا پوشیدہ علت) اتنی شدید ہے کہ دوسرے طرق اسے دور نہیں کر سکتے، اس لیے حدیث ضعیف ہی رہتی ہے۔"
+  },
+  fabricated_title: { en: "A fabricator cannot be repaired", ar: "الوضع لا ينجبر", ur: "من گھڑت روایت کی تلافی نہیں ہوتی" },
+  fabricated_body: {
+    en: "The chain contains a convicted fabricator (or has no authentic prophetic chain at all). No number of other routes can repair a fabrication, so the hadith is rejected as Mawdu'.",
+    ar: "في الإسناد وضّاع (أو لا إسناد صحيح له أصلاً). والوضع لا ينجبر بكثرة الطرق، فالحديث مردود موضوع.",
+    ur: "سند میں جھوٹی حدیثیں گھڑنے والا راوی ہے (یا رسول اللہ ﷺ تک کوئی صحیح سند ہی نہیں)۔ من گھڑت روایت کو طرق کی کثرت درست نہیں کرتی، اس لیے حدیث موضوع ہو کر مردود ہے۔"
+  }
+};
+
+function makeReason(kind, titleKey, bodyKey, gradeCode, details) {
+  const item = { kind };
+  ["en", "ar", "ur"].forEach(lang => {
+    item["title_" + lang] = REASON_TEXT[titleKey][lang];
+    let body = bodyKey ? REASON_TEXT[bodyKey][lang] : "";
+    if (body && gradeCode) {
+      const g = GRADES[gradeCode];
+      body = body.replace("{grade}", lang === "ar" ? g.verdict_ar : (lang === "ur" ? g.verdict_ur : g.verdict));
+    }
+    item["body_" + lang] = body;
+    item["details_" + lang] = (details && details[lang]) || [];
+  });
+  return item;
+}
+
+function buildGradeReasons(gradeCode, rules, corroborated) {
+  const byId = Object.fromEntries(rules.map(r => [r.rule_id, r]));
+  const items = [];
+
+  rules.forEach(r => {
+    const weak = r.status !== "PASS" || (r.rule_id === "dabt" && r.score < 90);
+    if (!weak) return;
+    items.push({
+      kind: r.status !== "PASS" ? "issue" : "note",
+      rule_id: r.rule_id, status: r.status, score: r.score,
+      title_en: r.rule_name_en, title_ar: r.rule_name_ar, title_ur: r.rule_name_ur,
+      body_en: "", body_ar: "", body_ur: "",
+      details_en: r.details_en || [], details_ar: r.details_ar || [], details_ur: r.details_ur || []
+    });
+  });
+
+  if (gradeCode === "SAHIH_LI_DHATIHI") {
+    items.push(makeReason("ok", "ok_title", null, null, {
+      en: rules.map(r => r.rule_name_en), ar: rules.map(r => r.rule_name_ar), ur: rules.map(r => r.rule_name_ur)
+    }));
+  } else if (gradeCode === "SAHIH_LI_GHAYRIHI" || gradeCode === "HASAN_LI_GHAYRIHI") {
+    items.push(makeReason("fixed", "fixed_title", "fixed_body", gradeCode));
+  } else if (gradeCode === "HASAN_LI_DHATIHI") {
+    items.push(makeReason("info", "hasan_title", "hasan_body"));
+  } else if (gradeCode === "MAWDU") {
+    items.push(makeReason("severe", "fabricated_title", "fabricated_body"));
+  } else {
+    const dabt = byId.dabt, adalah = byId.adalah;
+    const hardFail = rules.some(r => r.status === "FAIL" && r.rule_id !== "dabt");
+    const light = !hardFail && (
+      (dabt.status === "FAIL" && dabt.score >= 40 && adalah.score >= 70) ||
+      (dabt.status !== "FAIL" && rules.some(r => r.status === "WARNING"))
+    );
+    items.push(light && !corroborated
+      ? makeReason("hint", "hint_title", "hint_body")
+      : makeReason("severe", "severe_title", "severe_body"));
+  }
+  return items;
+}
+
 function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj, corroborated) {
   const isDirectFormula = (f) => {
     if (!f) return false;
@@ -286,21 +376,7 @@ function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj, corrob
     };
   });
 
-  return {
-    grade: gradeCode,
-    corroborated: !!corroborated,
-    summary_en: g.summary_en,
-    summary_ar: g.summary_ar,
-    summary_ur: g.summary_ur,
-    verdict,
-    verdict_ar: verdictAr,
-    verdict_ur: verdictUr,
-    sub_verdict_en: subEn,
-    sub_verdict_ar: subAr,
-    sub_verdict_ur: subUr,
-    badge_class: badgeClass,
-    overall_score: overallScore,
-    rule_audits: [
+  const ruleAudits = [
       {
         rule_id: "ittisal",
         rule_name_en: "Chain Continuity (Ittisal al-Sanad)",
@@ -361,7 +437,24 @@ function verifyHadithClientSide(narratorIds, formulas, hadithId, matnObj, corrob
         details_ur: illahDetailsUr,
         scholar_reference: "Ibn Rajab al-Hanbali: Sharh 'Ilal al-Tirmidhi"
       }
-    ],
+    ];
+
+  return {
+    grade: gradeCode,
+    corroborated: !!corroborated,
+    grade_reasons: buildGradeReasons(gradeCode, ruleAudits, !!corroborated),
+    summary_en: g.summary_en,
+    summary_ar: g.summary_ar,
+    summary_ur: g.summary_ur,
+    verdict,
+    verdict_ar: verdictAr,
+    verdict_ur: verdictUr,
+    sub_verdict_en: subEn,
+    sub_verdict_ar: subAr,
+    sub_verdict_ur: subUr,
+    badge_class: badgeClass,
+    overall_score: overallScore,
+    rule_audits: ruleAudits,
     chain_nodes: chainNodes,
     chain_edges: edgeReports,
     matn: matnObj || {

@@ -1318,3 +1318,75 @@ body {
 .rule-details-list li { font-size: 0.98rem; line-height: 1.7; }
 .rule-label-title { font-size: 1.02rem; }
 .form-label { font-size: 1rem; }
+
+/* Book buttons */
+.book-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0.6rem;
+}
+.book-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: start;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.book-btn:hover { border-color: var(--accent-gold); transform: translateY(-1px); }
+.book-btn.active {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 1px var(--accent-gold), 0 0 12px var(--accent-gold-glow);
+}
+.book-btn-name { font-size: 1rem; font-weight: 700; line-height: 1.4; }
+.book-btn-count { font-size: 0.82rem; color: var(--text-muted); }
+.book-load-error { color: var(--color-daif); font-size: 0.9rem; }
+
+/* Why this grade */
+.grade-reasons-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+  margin-bottom: 1.25rem;
+}
+.grade-reasons-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  margin-bottom: 0.75rem;
+}
+.reason-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.reason-item:first-of-type { border-top: none; padding-top: 0; }
+.reason-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: var(--bg-tertiary);
+}
+.reason-item.ok .reason-icon { background: rgba(16, 185, 129, 0.18); color: var(--color-sahih); }
+.reason-item.fixed .reason-icon { background: rgba(16, 185, 129, 0.18); }
+.reason-item.issue .reason-icon { background: rgba(239, 68, 68, 0.15); color: var(--color-mawdu); }
+.reason-item.note .reason-icon { background: rgba(245, 158, 11, 0.15); color: var(--color-daif); }
+.reason-content { min-width: 0; flex: 1; }
+.reason-title { font-weight: 700; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem; }
+.reason-score { font-weight: 600; font-size: 0.82rem; color: var(--text-muted); }
+.reason-details { margin: 0.2rem 0 0; padding-inline-start: 1.1rem; font-size: 0.95rem; line-height: 1.65; color: var(--text-secondary); }
+.reason-body { margin: 0.35rem 0 0; font-size: 0.97rem; line-height: 1.75; color: var(--text-secondary); }

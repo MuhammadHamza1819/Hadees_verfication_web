@@ -53,46 +53,6 @@ CORPUS_DATABASE: Dict[str, Dict[str, Any]] = {
             {"scholar": "Al-Shafi'i", "verdict": "This Hadith constitutes one third of all Islamic knowledge."}
         ]
     },
-    "hadith_golden_chain": {
-        "id": "hadith_golden_chain",
-        "title_en": "The Golden Chain (Silsilat al-Dhahab) - Brotherly Love",
-        "title_ar": "سلسلة الذهب: حديث محبة الخير للأخ المسلم",
-        "title_ur": "سلسلۃ الذہب: مسلمان بھائی کے لیے خیر خواہی کی حدیث",
-        "book": "Al-Muwatta & Sahih al-Bukhari",
-        "hadith_number": "Bukhari #13 / Muslim #45",
-        "chapter_ar": "كتاب الإيمان - باب من الإيمان أن يحب لأخيه ما يحب لنفسه",
-        "chapter_en": "Book of Faith - Chapter on Loving for One's Brother",
-        "chapter_ur": "کتاب الایمان - اپنے بھائی کے لیے پسند کرنے کا بیان",
-        "sanad_ar": "رَوَاهُ مَالِكٌ، عَنْ نَافِعٍ، عَنْ عَبْدِ اللَّهِ بْنِ عُمَرَ، عَنِ النَّبِيِّ ﷺ",
-        "sanad_en": "Narrated by Malik, from Nafi', from Abdullah ibn Umar, from the Prophet ﷺ.",
-        "sanad_ur": "امام مالک نے نافع سے، انہوں نے عبداللہ بن عمر سے، انہوں نے نبی کریم ﷺ سے روایت کیا۔",
-        "matn_ar": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ مِنَ الْخَيْرِ.",
-        "matn_en": "None of you truly believes until he loves for his brother what he loves for himself of good.",
-        "matn_ur": "تم میں سے کوئی شخص اس وقت تک کامل مومن نہیں ہو سکتا جب تک وہ اپنے بھائی کے لیے وہی پسند نہ کرے جو اپنے لیے پسند کرتا ہے۔",
-        "narrator_ids": [
-            "al_bukhari",
-            "malik_ibn_anas",
-            "nafi_mawla_ibn_umar",
-            "abdullah_ibn_umar",
-            "prophet_muhammad"
-        ],
-        "transmission_formulas": [
-            "haddathana",
-            "an",
-            "an",
-            "an"
-        ],
-        "known_verdict": "SAHIH_LI_DHATIHI",
-        "corroborated": False,
-        "known_sub_verdict": "Sahih li-dhatihi (Golden Chain / Silsilat al-Dhahab)",
-        "ruling_summary_en": "The pinnacle of Isnads in Hadith literature: Imam Malik from Nafi' from Ibn Umar. Fully authentic and sound.",
-        "ruling_summary_ar": "أصح الأسانيد قاطبة كما نص عليه البخاري والنسائي (مالك عن نافع عن ابن عمر).",
-        "ruling_summary_ur": "محدثین کے نزدیک سب سے معتبر ترین سند (سلسلہ الذہب)۔ مکمل طور پر صحیح لذاتہ۔",
-        "classical_scholars": [
-            {"scholar": "Imam al-Bukhari", "verdict": "Asahh al-Asanid (The soundest chain of all)"},
-            {"scholar": "Al-Nawawi", "verdict": "Sahih Muttafaq 'Alayh"}
-        ]
-    },
     "hadith_talab_ilm": {
         "id": "hadith_talab_ilm",
         "title_en": "Seeking Knowledge is an Obligation (Talab al-Ilm Faridah)",
