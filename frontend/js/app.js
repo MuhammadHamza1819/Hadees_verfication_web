@@ -398,7 +398,7 @@ function renderCorpusLibrary(query = "") {
           <span style="font-size: 0.8rem; color: var(--text-muted);">${item.book}</span>
         </div>
         <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary);">${title}</h4>
-        <div class="arabic-text" style="font-size: 1.1rem; line-height: 1.9; margin-bottom: 0.65rem; color: #FFFFFF;">${item.matn_ar.slice(0, 140)}...</div>
+        <div class="arabic-text" style="font-size: 1.1rem; line-height: 1.9; margin-bottom: 0.65rem; color: var(--text-primary);">${item.matn_ar.slice(0, 140)}...</div>
         <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${trans.slice(0, 160)}...</div>
       </div>
       <div style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
@@ -538,6 +538,7 @@ async function fetchFromIslamicUrduBooks() {
     const data = await res.json();
     lastFetchedIubData = data;
     renderIubHadithCard(data);
+    await verifyFetchedIubHadith();
   } catch (err) {
     console.error("Error fetching from API:", err);
     // Display error feedback gracefully

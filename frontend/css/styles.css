@@ -802,7 +802,7 @@ body {
   position: absolute;
   font-size: 1.2rem;
   font-weight: 800;
-  color: #FFFFFF;
+  color: var(--text-primary);
 }
 
 /* 5 Rules Diagnostic List */
@@ -937,7 +937,7 @@ body {
   font-family: var(--font-ar);
   font-size: 1.35rem;
   line-height: 2.1;
-  color: #FFFFFF;
+  color: var(--text-primary);
   text-align: right;
   direction: rtl;
   margin-bottom: 0.85rem;
@@ -960,8 +960,7 @@ body {
   border-radius: var(--radius-lg);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
   width: 100%;
 }
 
@@ -969,9 +968,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.75rem;
+  flex-wrap: wrap;
+  gap: 1rem 0.75rem;
   padding: 0.5rem 0;
-  min-width: 580px;
 }
 
 .rawi-node {
@@ -1274,3 +1273,7 @@ body {
     background: #FFFFFF !important;
   }
 }
+
+/* Light theme: replace white-on-dark tracks */
+[data-theme="light"] .score-circle-bg { stroke: rgba(15, 23, 42, 0.1); }
+[data-theme="light"] .rule-progress-bar-bg { background: rgba(15, 23, 42, 0.1); }

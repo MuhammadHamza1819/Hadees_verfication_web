@@ -31,7 +31,6 @@
       <!-- Navigation Tabs -->
       <nav class="nav-tabs" role="tablist">
         <button class="nav-tab-btn active" data-tab="tabVerifier" data-i18n="tab_verifier">🔍 Smart Verifier</button>
-        <button class="nav-tab-btn" data-tab="tabIslamicUrduBooks" data-i18n="tab_islamicurdubooks">📥 IslamicUrduBooks</button>
         <button class="nav-tab-btn" data-tab="tabGraph" data-i18n="tab_graph">📜 Sanad Diagram</button>
         <button class="nav-tab-btn" data-tab="tabAuditor" data-i18n="tab_auditor">⚖️ Guided Auditor</button>
         <button class="nav-tab-btn" data-tab="tabCorpus" data-i18n="tab_corpus">📚 Hadith Library</button>
@@ -75,105 +74,8 @@
 
     <!-- TAB 1: Smart Verifier -->
     <div id="tabVerifier" class="tab-panel active">
-      <div class="verifier-layout">
-        
-        <!-- Left Column: Input, Presets & Chain Builder -->
-        <div class="verifier-controls">
-          
-          <!-- Preset Benchmarks -->
-          <div class="glass-card" style="margin-bottom: 1.5rem;">
-            <div class="card-header">
-              <div class="card-title">
-                <span class="card-title-icon">⚡</span>
-                <span data-i18n="presets_label">Select a Classical Benchmark Hadith:</span>
-              </div>
-            </div>
-            <div class="preset-buttons-grid" id="presetButtonsContainer"></div>
-          </div>
-
-          <!-- Chain Builder -->
-          <div class="glass-card" style="margin-bottom: 1.5rem;">
-            <div class="card-header">
-              <div class="card-title">
-                <span class="card-title-icon">⛓️</span>
-                <span data-i18n="chain_builder_title">Sanad (Chain of Narrators) Flow:</span>
-              </div>
-            </div>
-
-            <div class="chain-builder-container">
-              <div class="chain-steps-list" id="chainStepsList"></div>
-              <div class="chain-builder-actions">
-                <button class="add-step-btn" onclick="addChainStep()" data-i18n="add_narrator_btn">+ Add Transmitter to Chain</button>
-              </div>
-            </div>
-
-            <!-- Custom Text Input -->
-            <div class="form-group">
-              <label class="form-label" data-i18n="custom_input_label">Or Enter / Select Hadith Chain & Text:</label>
-              <textarea class="form-textarea arabic-text" id="hadithCustomTextInput" rows="3" data-i18n-placeholder="textarea_placeholder" placeholder="Paste Arabic text, English translation, or narrator chain here..."></textarea>
-            </div>
-
-            <button class="btn-primary" id="executeVerifyBtn" onclick="runVerification()">
-              <span>⚡</span> <span data-i18n="verify_btn">Execute Scientific Verification</span>
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Right Column: Verification Diagnostic & Results -->
-        <div class="verifier-results">
-          <div class="glass-card" id="verificationResultsCard">
-            
-            <!-- Verdict Hero -->
-            <div id="verdictHeroContainer"></div>
-
-            <!-- Matn Display Box -->
-            <div id="matnDisplayContainer"></div>
-
-            <!-- 5 Rules Audit List -->
-            <div class="card-header" style="margin-top: 1rem;">
-              <div class="card-title">
-                <span class="card-title-icon">📋</span>
-                <span data-i18n="rules_audit_heading">The 5 Pillar Rules Evaluation</span>
-              </div>
-            </div>
-            <div class="rules-audit-list" id="rulesAuditListContainer"></div>
-
-            <!-- Interactive Sanad Graph Flow -->
-            <div class="card-header" style="margin-top: 1rem;">
-              <div class="card-title">
-                <span class="card-title-icon">🌐</span>
-                <span data-i18n="tab_graph">Sanad Visualizer</span>
-              </div>
-            </div>
-            <div class="sanad-graph-wrapper" id="sanadGraphContainer"></div>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TAB: IslamicUrduBooks.com Integration -->
-    <div id="tabIslamicUrduBooks" class="tab-panel">
+      <!-- Fetch by Book & Hadith Number -->
       <div class="glass-card" style="margin-bottom: 1.5rem;">
-        <div class="card-header">
-          <div class="card-title">
-            <span class="card-title-icon">📥</span>
-            <span data-i18n="iub_panel_title">IslamicUrduBooks.com Live Hadith Fetcher & Verifier</span>
-          </div>
-          <a href="https://www.islamicurdubooks.com" target="_blank" rel="noopener" style="color: var(--accent-gold); font-size: 0.85rem; text-decoration: none; display: flex; align-items: center; gap: 0.35rem;">
-            <span>🌐 www.islamicurdubooks.com</span> ↗
-          </a>
-        </div>
-        <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;" data-i18n="iub_panel_desc">
-          Fetch authentic Hadiths directly from IslamicUrduBooks.com with complete Arabic text, Urdu translations, chapters, and narrator chains, then instantly verify them using the 5 classical Hadith rules.
-        </p>
-      </div>
-
-      <div class="verifier-layout">
-        <!-- Controls Column -->
-        <div class="glass-card">
           <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
             <span>🔍</span> <span data-i18n="iub_fetch_heading">Fetch by Book & Hadith Number</span>
           </h3>
@@ -218,64 +120,87 @@
               <button class="nav-tab-btn" style="border: 1px solid var(--border-subtle); font-size: 0.78rem;" onclick="setIubQuick(8, 1)">40 Nawawi #1</button>
             </div>
           </div>
+      </div>
 
-          <!-- Documentation Accordion / Box -->
-          <div style="background: var(--bg-tertiary); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-top: 1.5rem;">
-            <h4 style="font-size: 0.92rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 0.45rem;">
-              💡 How to Extract Data from IslamicUrduBooks.com:
-            </h4>
-            <ul style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.35rem;">
-              <li><strong>URL Pattern:</strong> <code>https://islamicurdubooks.com/hadith/hadith-.php?bookid={id}&hadith_number={no}</code></li>
-              <li><strong>Scraper Tool:</strong> Run our script in terminal: <code>python scraper_islamicurdubooks.py --book 1 --start 1 --end 10</code></li>
-              <li><strong>REST API:</strong> Call <code>/api/islamicurdubooks/fetch?book_id=1&hadith_number=1</code></li>
-              <li><strong>Narrator IDs:</strong> Rawi links use <code>rawy-details.php?rawyid={id}</code> for Ilm ar-Rijal biographies.</li>
-            </ul>
-          </div>
+      <!-- Search / Custom Input (top) -->
+      <div class="glass-card" style="margin-bottom: 1.5rem;">
+        <!-- Custom Text Input -->
+        <div class="form-group">
+          <label class="form-label" data-i18n="custom_input_label">Or Enter / Select Hadith Chain & Text:</label>
+          <textarea class="form-textarea arabic-text" id="hadithCustomTextInput" rows="3" data-i18n-placeholder="textarea_placeholder" placeholder="Paste Arabic text, English translation, or narrator chain here..."></textarea>
         </div>
 
-        <!-- Preview & Verification Column -->
-        <div class="glass-card" id="iubResultContainer">
-          <div id="iubPlaceholder" style="text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
-            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">📖</div>
-            <h4 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 0.5rem;" data-i18n="iub_placeholder_title">No Hadith Selected Yet</h4>
-            <p style="font-size: 0.88rem; max-width: 380px; margin: 0 auto;" data-i18n="iub_placeholder_desc">Select a book and Hadith number on the left and click "Fetch Hadith" to view the Arabic text, Urdu translation, and narrators.</p>
-          </div>
+        <button class="btn-primary" id="executeVerifyBtn" onclick="runVerification()">
+          <span>⚡</span> <span data-i18n="verify_btn">Execute Scientific Verification</span>
+        </button>
+      </div>
 
-          <div id="iubContentCard" style="display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-              <span class="preset-badge sahih" id="iubBookBadge">Sahih al-Bukhari</span>
-              <span style="font-size: 0.82rem; color: var(--text-gold); font-weight: 600;" id="iubHadithNoBadge">Hadith #1</span>
-            </div>
-
-            <div style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;" id="iubChapterInfo"></div>
-
-            <!-- Arabic Text -->
-            <div class="matn-display-box" style="margin-bottom: 1rem;">
-              <div style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-emerald); margin-bottom: 0.4rem; font-weight: 700;">Arabic Matn & Sanad:</div>
-              <div class="arabic-text" id="iubArabicText" style="color: #FFFFFF; font-size: 1.3rem;"></div>
-            </div>
-
-            <!-- Urdu Translation -->
-            <div class="matn-display-box" style="margin-bottom: 1.25rem;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                <span style="font-size: 0.78rem; text-transform: uppercase; color: var(--text-gold); font-weight: 700;">Urdu Translation:</span>
-                <span style="font-size: 0.75rem; background: rgba(212, 175, 55, 0.15); color: var(--text-gold); padding: 0.15rem 0.5rem; border-radius: 4px;" id="iubTranslatorName">مولانا داود راز</span>
+      <div class="verifier-layout">
+        
+        <!-- Left Column: Input, Presets & Chain Builder -->
+        <div class="verifier-controls">
+          
+          <!-- Preset Benchmarks -->
+          <div class="glass-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">⚡</span>
+                <span data-i18n="presets_label">Select a Classical Benchmark Hadith:</span>
               </div>
-              <div class="urdu-text" id="iubUrduText" style="color: var(--text-primary); font-size: 1.15rem;"></div>
+            </div>
+            <div class="preset-buttons-grid" id="presetButtonsContainer"></div>
+          </div>
+
+          <!-- Chain Builder -->
+          <div class="glass-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="card-title-icon">⛓️</span>
+                <span data-i18n="chain_builder_title">Sanad (Chain of Narrators) Flow:</span>
+              </div>
             </div>
 
-            <!-- Narrators Extracted -->
-            <div id="iubNarratorsSection" style="margin-bottom: 1.5rem; display: none;">
-              <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.45rem;">Extracted Narrators from Chain:</span>
-              <div id="iubNarratorsList" style="display: flex; flex-wrap: wrap; gap: 0.4rem;"></div>
+            <div class="chain-builder-container">
+              <div class="chain-steps-list" id="chainStepsList"></div>
+              <div class="chain-builder-actions">
+                <button class="add-step-btn" onclick="addChainStep()" data-i18n="add_narrator_btn">+ Add Transmitter to Chain</button>
+              </div>
             </div>
+          </div>
 
-            <!-- Action Button to Verify -->
-            <button class="btn-primary" onclick="verifyFetchedIubHadith()" style="background: linear-gradient(135deg, var(--accent-gold), #B48214);">
-              <span>⚡</span> <span data-i18n="iub_verify_action_btn">Verify This Hadith with 5 Classical Rules</span>
-            </button>
+        </div>
+
+        <!-- Right Column: Verification Diagnostic & Results -->
+        <div class="verifier-results">
+          <div class="glass-card" id="verificationResultsCard">
+            
+            <!-- Verdict Hero -->
+            <div id="verdictHeroContainer"></div>
+
+            <!-- Matn Display Box -->
+            <div id="matnDisplayContainer"></div>
+
+            <!-- 5 Rules Audit List -->
+            <div class="card-header" style="margin-top: 1rem;">
+              <div class="card-title">
+                <span class="card-title-icon">📋</span>
+                <span data-i18n="rules_audit_heading">The 5 Pillar Rules Evaluation</span>
+              </div>
+            </div>
+            <div class="rules-audit-list" id="rulesAuditListContainer"></div>
+
+            <!-- Interactive Sanad Graph Flow -->
+            <div class="card-header" style="margin-top: 1rem;">
+              <div class="card-title">
+                <span class="card-title-icon">🌐</span>
+                <span data-i18n="tab_graph">Sanad Visualizer</span>
+              </div>
+            </div>
+            <div class="sanad-graph-wrapper" id="sanadGraphContainer"></div>
+
           </div>
         </div>
+
       </div>
     </div>
 
