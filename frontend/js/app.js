@@ -28,6 +28,15 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initTabs();
   loadIubBooksList();
+  const hadithNumInput = document.getElementById("iubHadithNumInput");
+  if (hadithNumInput) {
+    hadithNumInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        fetchFromIslamicUrduBooks();
+      }
+    });
+  }
   initPresets();
   renderChainBuilder();
   renderCorpusLibrary();
@@ -584,6 +593,37 @@ async function loadIubBooksList() {
   renderIubBookButtons();
 }
 
+// Tell the user where the fetched hadith came from, and warn when it is not the website's own text
+function showFetchNotice(data) {
+  const el = document.getElementById("iubFetchNotice");
+  if (!el) return;
+
+  const bookName = currentLang === 'ar' ? data.book_name_ar : (currentLang === 'ur' ? data.book_name_ur : data.book_name_en);
+  const bab = currentLang === 'ur' ? (data.bab_ur || data.bab_ar) : (data.bab_ar || data.bab_ur);
+  const linkLabel = currentLang === 'ur' ? 'ویب سائٹ پر کھولیں' : (currentLang === 'ar' ? 'افتح في الموقع' : 'Open on the website');
+  const link = data.source_url ? ` <a href="${data.source_url}" target="_blank" rel="noopener">${linkLabel} ↗</a>` : "";
+  const numLabel = currentLang === 'ur' ? 'حدیث نمبر' : (currentLang === 'ar' ? 'حديث رقم' : 'Hadith #');
+
+  let kind = "ok";
+  let text;
+  if (data.is_fallback) {
+    kind = "error";
+    text = currentLang === 'ur' ? 'یہ حدیث حاصل نہیں ہو سکی۔ دوبارہ کوشش کریں۔'
+         : (currentLang === 'ar' ? 'تعذر جلب هذا الحديث. حاول مرة أخرى.' : 'This hadith could not be loaded. Please try again.');
+  } else if (data.source_warning) {
+    kind = "warn";
+    text = currentLang === 'ur' ? 'islamicurdubooks.com تک رسائی نہیں ہو سکی، اس لیے متن متبادل ذریعے سے ہے جس کا حدیث نمبر ویب سائٹ سے مختلف ہو سکتا ہے۔'
+         : (currentLang === 'ar' ? 'تعذر الوصول إلى islamicurdubooks.com، فالنص من مصدر احتياطي قد يختلف ترقيمه عن الموقع.' : data.source_warning);
+  } else {
+    const from = currentLang === 'ur' ? 'islamicurdubooks.com سے' : (currentLang === 'ar' ? 'من islamicurdubooks.com' : 'From islamicurdubooks.com');
+    text = `${from}: ${bookName} - ${numLabel} ${data.hadith_number}${bab ? ' - ' + bab : ''}`;
+  }
+
+  el.className = `fetch-notice ${kind}`;
+  el.innerHTML = `${text}${kind === "error" ? "" : link}`;
+  el.style.display = "block";
+}
+
 function renderIubBookButtons() {
   const bookInput = document.getElementById("iubBookSelect");
   const grid = document.getElementById("iubBookButtons");
@@ -630,6 +670,8 @@ async function fetchFromIslamicUrduBooks() {
     const data = await res.json();
     lastFetchedIubData = data;
     renderIubHadithCard(data);
+    showFetchNotice(data);
+    if (data.is_fallback) return;
     await verifyFetchedIubHadith();
   } catch (err) {
     console.error("Error fetching from API:", err);

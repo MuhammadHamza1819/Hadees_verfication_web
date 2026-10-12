@@ -1390,3 +1390,18 @@ body {
 .reason-score { font-weight: 600; font-size: 0.82rem; color: var(--text-muted); }
 .reason-details { margin: 0.2rem 0 0; padding-inline-start: 1.1rem; font-size: 0.95rem; line-height: 1.65; color: var(--text-secondary); }
 .reason-body { margin: 0.35rem 0 0; font-size: 0.97rem; line-height: 1.75; color: var(--text-secondary); }
+
+/* Fetch source notice */
+.fetch-notice {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+.fetch-notice a { color: var(--accent-gold); font-weight: 600; margin-inline-start: 0.4rem; text-decoration: none; }
+.fetch-notice.warn { border-color: var(--color-daif); color: var(--color-daif); }
+.fetch-notice.error { border-color: var(--color-mawdu); color: var(--color-mawdu); }

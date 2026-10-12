@@ -26,6 +26,9 @@ except OSError:
     CACHE_DIR = os.path.join(tempfile.gettempdir(), "cache_islamicurdubooks")
     os.makedirs(CACHE_DIR, exist_ok=True)
 
+SITE_SOURCE = "islamicurdubooks"
+SITE_TIMEOUT = 8.0
+
 ISLAMIC_URDU_BOOKS = [
     {
         "id": 1,
@@ -673,67 +676,70 @@ async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
     """
     Fetch a Hadith by book_id and hadith_number.
     Order of operations:
-    1. Local Disk Cache
-    2. Pre-cached Curated Landmark Hadiths
-    3. High-Speed Canonical CDN (Arabic + Urdu + English)
-    4. IslamicUrduBooks.com Live Scraper
-    5. Clean Structured Fallback
+    1. Local disk cache (only copies fetched from the real site)
+    2. IslamicUrduBooks.com live page - the source of truth for hadith numbering
+    3. Backup sources (offline samples, canonical CDN) - their numbering can differ from the site,
+       so the result is flagged with `source_warning`
+    4. Clean structured fallback
     """
     clean_num = normalize_hadith_number(hadith_number)
     cache_key = f"{book_id}_{clean_num}"
     cache_file = os.path.join(CACHE_DIR, f"{cache_key}.json")
+    url = f"https://islamicurdubooks.com/hadith/hadith-.php?bookid={book_id}&hadith_number={clean_num}"
 
-    # 1. Return from disk cache if exists
+    # 1. Disk cache - only entries that came from the real site
     if os.path.exists(cache_file):
         try:
             with open(cache_file, "r", encoding="utf-8") as f:
                 cached_data = json.load(f)
-                if cached_data.get("arabic_text") and not cached_data.get("is_fallback"):
+                if cached_data.get("arabic_text") and cached_data.get("source") == SITE_SOURCE:
                     return cached_data
         except Exception as e:
             logger.warning(f"Failed to read cache file {cache_file}: {e}")
 
-    # 2. Return from pre-cached canonical library if available
-    if cache_key in OFFLINE_PRECACHED_HADITHS:
-        return OFFLINE_PRECACHED_HADITHS[cache_key]
-
-    # 3. Fetch from Canonical High-Speed CDN (Reliable, fast, contains all 6 canonical books)
-    try:
-        cdn_data = await fetch_from_hadith_cdn(book_id, clean_num)
-        if cdn_data and cdn_data.get("arabic_text") and not cdn_data.get("is_fallback"):
-            try:
-                with open(cache_file, "w", encoding="utf-8") as f:
-                    json.dump(cdn_data, f, ensure_ascii=False, indent=2)
-            except Exception as e:
-                logger.warning(f"Failed to cache CDN Hadith data: {e}")
-            return cdn_data
-    except Exception as e:
-        logger.warning(f"CDN fetch attempt failed for {cache_key}: {e}")
-
-    # 4. Live network fetch from IslamicUrduBooks.com with brief timeout
-    url = f"https://islamicurdubooks.com/hadith/hadith-.php?bookid={book_id}&hadith_number={clean_num}"
+    # 2. Live fetch from IslamicUrduBooks.com (the site sits behind a bot check that
+    #    rejects HTTP/1.1 clients, so HTTP/2 is required)
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language": "ur,ar;q=0.9,en-US;q=0.8,en;q=0.7"
     }
-
     try:
-        async with httpx.AsyncClient(timeout=1.0, follow_redirects=True) as client:
-            resp = await client.get(url, headers=headers)
+        async with httpx.AsyncClient(http2=True, timeout=SITE_TIMEOUT, follow_redirects=True, headers=headers) as client:
+            resp = await client.get(url)
             if resp.status_code == 200:
                 data = parse_hadith_page(resp.text, book_id, clean_num)
                 if data.get("arabic_text"):
+                    data["source"] = SITE_SOURCE
                     try:
                         with open(cache_file, "w", encoding="utf-8") as f:
                             json.dump(data, f, ensure_ascii=False, indent=2)
                     except Exception as e:
                         logger.warning(f"Failed to save cache for {cache_key}: {e}")
                     return data
+            else:
+                logger.warning(f"islamicurdubooks.com answered {resp.status_code} for {cache_key}")
     except Exception as e:
-        logger.warning(f"Live request to {url} skipped: {e}")
+        logger.warning(f"Live request to {url} failed: {e}")
 
-    # 5. Guaranteed structured fallback
+    # 3. Backups. Their numbering is not the site's numbering, so flag the result.
+    warning = "islamicurdubooks.com could not be reached, so this text comes from a backup source whose hadith numbering may differ from the website."
+    if cache_key in OFFLINE_PRECACHED_HADITHS:
+        data = dict(OFFLINE_PRECACHED_HADITHS[cache_key])
+        data["source"] = "offline"
+        data["source_warning"] = warning
+        return data
+
+    try:
+        cdn_data = await fetch_from_hadith_cdn(book_id, clean_num)
+        if cdn_data and cdn_data.get("arabic_text") and not cdn_data.get("is_fallback"):
+            cdn_data["source"] = "cdn"
+            cdn_data["source_warning"] = warning
+            return cdn_data
+    except Exception as e:
+        logger.warning(f"CDN fetch attempt failed for {cache_key}: {e}")
+
+    # 4. Structured fallback (no real text available)
     book_info = next((b for b in ISLAMIC_URDU_BOOKS if b["id"] == book_id), {
         "id": book_id, "name_ar": "كتاب حديث", "name_ur": "کتاب حدیث", "name_en": "Hadith Book"
     })
@@ -761,5 +767,6 @@ async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
         ],
         "takhrij": f"مصدر: {url}",
         "source_url": url,
+        "source": "none",
         "is_fallback": True
     }
