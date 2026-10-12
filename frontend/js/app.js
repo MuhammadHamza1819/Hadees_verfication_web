@@ -571,6 +571,7 @@ function updateActiveViewTranslations() {
   runVerification();
   if (lastFetchedIubData) {
     renderIubHadithCard(lastFetchedIubData);
+    showFetchNotice(lastFetchedIubData);
   }
 }
 
@@ -632,30 +633,40 @@ function showFetchNotice(data) {
   }
 
   const bookName = currentLang === 'ar' ? data.book_name_ar : (currentLang === 'ur' ? data.book_name_ur : data.book_name_en);
-  const bab = splitBabNumber(data.bab_ar || data.bab_ur);
+  const babAr = splitBabNumber(data.bab_ar);
   const babUr = splitBabNumber(data.bab_ur);
-  const babNumber = bab.number || babUr.number;
+  const babNumber = babAr.number || babUr.number;
 
-  const row = (label, value, secondary) => value ? `
+  // Arabic is the primary text. Urdu text is only ever shown in the Urdu interface,
+  // so an English or Arabic view never leaks Urdu when the Arabic title is missing.
+  const hasLetters = (t) => /[؀-ۿ]/.test(t || "");
+  const pickText = (ar, ur) => {
+    const arabic = hasLetters(ar) ? ar : "";
+    const urdu = hasLetters(ur) ? ur : "";
+    if (currentLang === "ur") {
+      return { primary: arabic || urdu, secondary: arabic && urdu ? urdu : "" };
+    }
+    return { primary: arabic, secondary: "" };
+  };
+
+  const row = (label, text) => text.primary ? `
     <div class="source-row">
       <span class="source-label">${label}</span>
       <span class="source-value">
-        <span class="source-primary">${value}</span>
-        ${secondary ? `<span class="source-secondary">${secondary}</span>` : ""}
+        <span class="source-primary">${text.primary}</span>
+        ${text.secondary ? `<span class="source-secondary">${text.secondary}</span>` : ""}
       </span>
     </div>` : "";
 
-  const chapterPrimary = data.chapter_ar || data.chapter_ur;
-  const chapterSecondary = data.chapter_ar && data.chapter_ur ? data.chapter_ur : "";
-  const babPrimary = bab.title || babUr.title;
-  const babSecondary = bab.title && babUr.title ? babUr.title : "";
+  const chapter = pickText(data.chapter_ar, data.chapter_ur);
+  const babText = pickText(babAr.title, babUr.title);
 
   el.className = "fetch-notice source-card" + (data.source_warning ? " warn" : "");
   el.innerHTML = `
     ${data.source_warning ? `<div class="source-warning">${L.warn}</div>` : ""}
-    ${row(L.book, `${bookName} - ${L.hadith} ${data.hadith_number}`)}
-    ${row(L.kitab, chapterPrimary, chapterSecondary)}
-    ${row(babNumber ? `${L.bab} ${babNumber}` : L.bab, babPrimary, babSecondary)}
+    ${row(L.book, { primary: `${bookName} - ${L.hadith} ${data.hadith_number}`, secondary: "" })}
+    ${row(L.kitab, chapter)}
+    ${row(babNumber ? `${L.bab} ${babNumber}` : L.bab, babText)}
   `;
   el.style.display = "block";
 }
