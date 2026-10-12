@@ -284,6 +284,15 @@ async def import_and_verify(payload: dict):
         "verification": verification
     }
 
+@app.middleware("http")
+async def no_cache_frontend(request, call_next):
+    """Make browsers revalidate the page, CSS and JS so UI updates show up immediately."""
+    response = await call_next(request)
+    path = request.url.path
+    if path == "/" or path.startswith(("/css/", "/js/")):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
 # Mount static frontend
 if os.path.exists(FRONTEND_DIR):
     app.mount("/css", StaticFiles(directory=os.path.join(FRONTEND_DIR, "css")), name="css")
