@@ -593,34 +593,55 @@ async function loadIubBooksList() {
   renderIubBookButtons();
 }
 
-// Tell the user where the fetched hadith came from, and warn when it is not the website's own text
+// Show which book (kitab) and chapter (bab) the fetched hadith belongs to
+function splitBabNumber(text) {
+  const m = (text || "").match(/^\s*(\d+)\s*[.\-)]\s*(.*)$/s);
+  return m ? { number: m[1], title: m[2].trim() } : { number: "", title: (text || "").trim() };
+}
+
 function showFetchNotice(data) {
   const el = document.getElementById("iubFetchNotice");
   if (!el) return;
 
-  const bookName = currentLang === 'ar' ? data.book_name_ar : (currentLang === 'ur' ? data.book_name_ur : data.book_name_en);
-  const bab = currentLang === 'ur' ? (data.bab_ur || data.bab_ar) : (data.bab_ar || data.bab_ur);
-  const linkLabel = currentLang === 'ur' ? 'ویب سائٹ پر کھولیں' : (currentLang === 'ar' ? 'افتح في الموقع' : 'Open on the website');
-  const link = data.source_url ? ` <a href="${data.source_url}" target="_blank" rel="noopener">${linkLabel} ↗</a>` : "";
-  const numLabel = currentLang === 'ur' ? 'حدیث نمبر' : (currentLang === 'ar' ? 'حديث رقم' : 'Hadith #');
+  const L = {
+    en: { book: "Book", hadith: "Hadith #", kitab: "Kitab (Chapter)", bab: "Bab", fail: "This hadith could not be loaded. Please try again.", warn: "The primary source could not be reached, so this text comes from a backup source whose hadith numbering and chapters may differ." },
+    ar: { book: "الكتاب", hadith: "حديث رقم", kitab: "الكتاب (الفصل)", bab: "الباب", fail: "تعذر جلب هذا الحديث. حاول مرة أخرى.", warn: "تعذر الوصول إلى المصدر الأصلي، فالنص من مصدر احتياطي قد يختلف ترقيم أحاديثه وأبوابه." },
+    ur: { book: "کتاب", hadith: "حدیث نمبر", kitab: "کتاب (باب الکتاب)", bab: "باب", fail: "یہ حدیث حاصل نہیں ہو سکی۔ دوبارہ کوشش کریں۔", warn: "بنیادی ذریعہ تک رسائی نہیں ہو سکی، اس لیے متن متبادل ذریعے سے ہے جس کے حدیث نمبر اور ابواب مختلف ہو سکتے ہیں۔" }
+  }[currentLang] || {};
 
-  let kind = "ok";
-  let text;
   if (data.is_fallback) {
-    kind = "error";
-    text = currentLang === 'ur' ? 'یہ حدیث حاصل نہیں ہو سکی۔ دوبارہ کوشش کریں۔'
-         : (currentLang === 'ar' ? 'تعذر جلب هذا الحديث. حاول مرة أخرى.' : 'This hadith could not be loaded. Please try again.');
-  } else if (data.source_warning) {
-    kind = "warn";
-    text = currentLang === 'ur' ? 'islamicurdubooks.com تک رسائی نہیں ہو سکی، اس لیے متن متبادل ذریعے سے ہے جس کا حدیث نمبر ویب سائٹ سے مختلف ہو سکتا ہے۔'
-         : (currentLang === 'ar' ? 'تعذر الوصول إلى islamicurdubooks.com، فالنص من مصدر احتياطي قد يختلف ترقيمه عن الموقع.' : data.source_warning);
-  } else {
-    const from = currentLang === 'ur' ? 'islamicurdubooks.com سے' : (currentLang === 'ar' ? 'من islamicurdubooks.com' : 'From islamicurdubooks.com');
-    text = `${from}: ${bookName} - ${numLabel} ${data.hadith_number}${bab ? ' - ' + bab : ''}`;
+    el.className = "fetch-notice error";
+    el.textContent = L.fail;
+    el.style.display = "block";
+    return;
   }
 
-  el.className = `fetch-notice ${kind}`;
-  el.innerHTML = `${text}${kind === "error" ? "" : link}`;
+  const bookName = currentLang === 'ar' ? data.book_name_ar : (currentLang === 'ur' ? data.book_name_ur : data.book_name_en);
+  const bab = splitBabNumber(data.bab_ar || data.bab_ur);
+  const babUr = splitBabNumber(data.bab_ur);
+  const babNumber = bab.number || babUr.number;
+
+  const row = (label, value, secondary) => value ? `
+    <div class="source-row">
+      <span class="source-label">${label}</span>
+      <span class="source-value">
+        <span class="source-primary">${value}</span>
+        ${secondary ? `<span class="source-secondary">${secondary}</span>` : ""}
+      </span>
+    </div>` : "";
+
+  const chapterPrimary = data.chapter_ar || data.chapter_ur;
+  const chapterSecondary = data.chapter_ar && data.chapter_ur ? data.chapter_ur : "";
+  const babPrimary = bab.title || babUr.title;
+  const babSecondary = bab.title && babUr.title ? babUr.title : "";
+
+  el.className = "fetch-notice source-card" + (data.source_warning ? " warn" : "");
+  el.innerHTML = `
+    ${data.source_warning ? `<div class="source-warning">${L.warn}</div>` : ""}
+    ${row(L.book, `${bookName} - ${L.hadith} ${data.hadith_number}`)}
+    ${row(L.kitab, chapterPrimary, chapterSecondary)}
+    ${row(babNumber ? `${L.bab} ${babNumber}` : L.bab, babPrimary, babSecondary)}
+  `;
   el.style.display = "block";
 }
 

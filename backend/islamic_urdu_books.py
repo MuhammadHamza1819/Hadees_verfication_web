@@ -723,7 +723,7 @@ async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
         logger.warning(f"Live request to {url} failed: {e}")
 
     # 3. Backups. Their numbering is not the site's numbering, so flag the result.
-    warning = "islamicurdubooks.com could not be reached, so this text comes from a backup source whose hadith numbering may differ from the website."
+    warning = "The primary source could not be reached, so this text comes from a backup source whose hadith numbering and chapters may differ."
     if cache_key in OFFLINE_PRECACHED_HADITHS:
         data = dict(OFFLINE_PRECACHED_HADITHS[cache_key])
         data["source"] = "offline"
