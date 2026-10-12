@@ -1426,3 +1426,19 @@ body {
 .source-primary { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); line-height: 1.8; }
 .source-secondary { font-size: 1rem; color: var(--text-secondary); line-height: 1.8; }
 .source-warning { padding: 0.4rem 0; font-weight: 600; }
+
+/* Hadith box fits its text; source card is centred */
+.form-textarea.arabic-text {
+  min-height: 70px;
+  overflow: hidden;
+  resize: none;
+}
+.source-row {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.3rem;
+}
+.source-label { flex: none; }
+.source-value { align-items: center; width: 100%; }
+.source-warning { text-align: center; }

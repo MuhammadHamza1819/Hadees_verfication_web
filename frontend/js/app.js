@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initTabs();
   loadIubBooksList();
+  const hadithBox = document.getElementById("hadithCustomTextInput");
+  if (hadithBox) {
+    hadithBox.addEventListener("input", autosizeHadithInput);
+    autosizeHadithInput();
+  }
+  window.addEventListener("resize", autosizeHadithInput);
   const hadithNumInput = document.getElementById("iubHadithNumInput");
   if (hadithNumInput) {
     hadithNumInput.addEventListener("keydown", (e) => {
@@ -134,6 +140,7 @@ function selectPreset(presetId) {
   const textInput = document.getElementById("hadithCustomTextInput");
   if (textInput) {
     textInput.value = item.matn_ar;
+    autosizeHadithInput();
   }
   chainSourceText = item.matn_ar;
 
@@ -142,6 +149,14 @@ function selectPreset(presetId) {
 
   renderChainBuilder();
   runVerification();
+}
+
+// Grow/shrink the hadith box to fit its text
+function autosizeHadithInput() {
+  const ta = document.getElementById("hadithCustomTextInput");
+  if (!ta || ta.parentElement.clientWidth < 120) return; // not laid out yet (hidden tab / zero width)
+  ta.style.height = "auto";
+  ta.style.height = ta.scrollHeight + 2 + "px";
 }
 
 // Text matching against the benchmark hadiths
@@ -779,6 +794,7 @@ async function verifyFetchedIubHadith() {
   const textInput = document.getElementById("hadithCustomTextInput");
   if (textInput) {
     textInput.value = lastFetchedIubData.arabic_text || "";
+    autosizeHadithInput();
   }
   chainSourceText = lastFetchedIubData.arabic_text || "";
 
