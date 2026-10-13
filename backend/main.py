@@ -208,9 +208,9 @@ def get_islamic_urdu_books():
     return ISLAMIC_URDU_BOOKS
 
 @app.get("/api/islamicurdubooks/fetch")
-async def fetch_from_islamic_urdu_books(book_id: int = Query(1), hadith_number: str = Query("1")):
+async def fetch_from_islamic_urdu_books(book_id: int = Query(1), hadith_number: str = Query("1"), numbering: str = Query("site")):
     """Fetch Hadith text, translations, and narrators from IslamicUrduBooks.com."""
-    return await fetch_hadith(book_id, hadith_number)
+    return await fetch_hadith(book_id, hadith_number, numbering)
 
 @app.post("/api/islamicurdubooks/import-and-verify")
 async def import_and_verify(payload: dict):
@@ -218,7 +218,7 @@ async def import_and_verify(payload: dict):
     book_id = payload.get("book_id", 1)
     hadith_number = str(payload.get("hadith_number", "1"))
     
-    hadith_data = await fetch_hadith(book_id, hadith_number)
+    hadith_data = await fetch_hadith(book_id, hadith_number, payload.get("numbering", "site"))
     
     # Map extracted narrators to known narrator IDs or fallback
     narrator_ids = []

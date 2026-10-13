@@ -633,7 +633,8 @@ async def fetch_from_hadith_cdn(book_id: int, hadith_number: str) -> Optional[Di
         # Extract grades and reference info
         h_item = (ar_json or ur_json or en_json)["hadiths"][0]
         grades = h_item.get("grades", [])
-        grade_str = ", ".join([f"{g.get('name')}: {g.get('grade')}" for g in grades if isinstance(g, dict)])
+        grade_list = [{"name": g.get("name", ""), "grade": g.get("grade", "")} for g in grades if isinstance(g, dict) and g.get("grade")]
+        grade_str = ", ".join([f"{g['name']}: {g['grade']}" for g in grade_list])
         ref = h_item.get("reference", {})
         ref_str = f"Book {ref.get('book', '')}, Hadith {ref.get('hadith', '')}" if ref else ""
         takhrij_notes = " | ".join(filter(bool, [ref_str, grade_str]))
@@ -659,10 +660,13 @@ async def fetch_from_hadith_cdn(book_id: int, hadith_number: str) -> Optional[Di
             "book_name_ur": book_info["name_ur"],
             "book_name_en": book_info["name_en"],
             "hadith_number": str(hadith_number),
-            "chapter_ar": chapter_title or "باب الحديث",
-            "chapter_ur": f"کتاب: {chapter_title}" if chapter_title else "باب الحدیث",
-            "bab_ar": f"حديث رقم {hadith_number}",
-            "bab_ur": f"حدیث نمبر {hadith_number}",
+            "chapter_ar": "",
+            "chapter_ur": "",
+            "chapter_en": chapter_title,
+            "bab_ar": "",
+            "bab_ur": "",
+            "reference": {"book": ref.get("book", ""), "hadith": ref.get("hadith", "")} if ref else {},
+            "grades": grade_list,
             "arabic_text": arabic_text,
             "sanad_narrators": narrators,
             "urdu_translations": urdu_translations,
@@ -672,7 +676,66 @@ async def fetch_from_hadith_cdn(book_id: int, hadith_number: str) -> Optional[Di
             "is_fallback": False
         }
 
-async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
+INTERNATIONAL_SOURCE = "international"
+
+
+async def fetch_hadith_international(book_id: int, hadith_number: str) -> Dict[str, Any]:
+    """
+    Fetch a hadith by its international (Sunnah.com style) reference number from the
+    standard hadith reference editions. Results are cached on disk.
+    """
+    clean_num = normalize_hadith_number(hadith_number)
+    cache_file = os.path.join(CACHE_DIR, f"intl_{book_id}_{clean_num}.json")
+
+    if os.path.exists(cache_file):
+        try:
+            with open(cache_file, "r", encoding="utf-8") as f:
+                cached = json.load(f)
+                if cached.get("arabic_text"):
+                    return cached
+        except Exception as e:
+            logger.warning(f"Failed to read cache file {cache_file}: {e}")
+
+    data = None
+    try:
+        data = await fetch_from_hadith_cdn(book_id, clean_num)
+    except Exception as e:
+        logger.warning(f"International fetch failed for {book_id}_{clean_num}: {e}")
+
+    book_info = next((x for x in ISLAMIC_URDU_BOOKS if x["id"] == book_id), {
+        "id": book_id, "name_ar": "كتاب حديث", "name_ur": "کتاب حدیث", "name_en": "Hadith Book"
+    })
+
+    if not data or not data.get("arabic_text") or data.get("is_fallback"):
+        return {
+            "book_id": book_id,
+            "book_name_ar": book_info["name_ar"],
+            "book_name_ur": book_info["name_ur"],
+            "book_name_en": book_info["name_en"],
+            "hadith_number": str(clean_num),
+            "chapter_ar": "", "chapter_ur": "", "chapter_en": "",
+            "bab_ar": "", "bab_ur": "",
+            "arabic_text": "",
+            "sanad_narrators": [],
+            "urdu_translations": [],
+            "numbering": "international",
+            "source": "none",
+            "is_fallback": True,
+            "unavailable_reason": "international_numbering_unavailable",
+        }
+
+    data["numbering"] = "international"
+    data["source"] = INTERNATIONAL_SOURCE
+    data.pop("source_url", None)
+    try:
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logger.warning(f"Failed to cache international hadith {book_id}_{clean_num}: {e}")
+    return data
+
+
+async def fetch_hadith(book_id: int, hadith_number: str, numbering: str = "site") -> Dict[str, Any]:
     """
     Fetch a Hadith by book_id and hadith_number.
     Order of operations:
@@ -682,6 +745,9 @@ async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
        so the result is flagged with `source_warning`
     4. Clean structured fallback
     """
+    if numbering == "international":
+        return await fetch_hadith_international(book_id, hadith_number)
+
     clean_num = normalize_hadith_number(hadith_number)
     cache_key = f"{book_id}_{clean_num}"
     cache_file = os.path.join(CACHE_DIR, f"{cache_key}.json")
@@ -711,6 +777,7 @@ async def fetch_hadith(book_id: int, hadith_number: str) -> Dict[str, Any]:
                 data = parse_hadith_page(resp.text, book_id, clean_num)
                 if data.get("arabic_text"):
                     data["source"] = SITE_SOURCE
+                    data["numbering"] = "site"
                     try:
                         with open(cache_file, "w", encoding="utf-8") as f:
                             json.dump(data, f, ensure_ascii=False, indent=2)

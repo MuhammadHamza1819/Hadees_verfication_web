@@ -276,7 +276,7 @@ async function runVerification() {
   if (!resultCard) return;
 
   // Prepare custom or preset payload
-  const activeHadith = CORPUS_DATA.find(c => c.id === currentHadithId) || (currentHadithId === "custom" ? fetchedMatn : null);
+  const activeHadith = fetchedMatn || CORPUS_DATA.find(c => c.id === currentHadithId);
   const textInput = document.getElementById("hadithCustomTextInput");
   const customMatn = textInput && textInput.value.trim() ? textInput.value.trim() : (activeHadith ? activeHadith.matn_ar : "حديث شريف");
 
@@ -581,6 +581,7 @@ function updateActiveViewTranslations() {
 // =========================================================
 
 let lastFetchedIubData = null;
+let iubNumbering = "site"; // "site" = website numbering, "international" = Sunnah.com style
 let iubCollectionsList = [];
 
 // Load the collections from GET /api/islamicurdubooks/books and show each as a button
@@ -620,19 +621,41 @@ function showFetchNotice(data) {
   if (!el) return;
 
   const L = {
-    en: { book: "Book", hadith: "Hadith #", kitab: "Kitab (Chapter)", bab: "Bab", fail: "This hadith could not be loaded. Please try again.", warn: "The primary source could not be reached, so this text comes from a backup source whose hadith numbering and chapters may differ." },
-    ar: { book: "الكتاب", hadith: "حديث رقم", kitab: "الكتاب (الفصل)", bab: "الباب", fail: "تعذر جلب هذا الحديث. حاول مرة أخرى.", warn: "تعذر الوصول إلى المصدر الأصلي، فالنص من مصدر احتياطي قد يختلف ترقيم أحاديثه وأبوابه." },
-    ur: { book: "کتاب", hadith: "حدیث نمبر", kitab: "کتاب (باب الکتاب)", bab: "باب", fail: "یہ حدیث حاصل نہیں ہو سکی۔ دوبارہ کوشش کریں۔", warn: "بنیادی ذریعہ تک رسائی نہیں ہو سکی، اس لیے متن متبادل ذریعے سے ہے جس کے حدیث نمبر اور ابواب مختلف ہو سکتے ہیں۔" }
+    en: { book: "Book", hadith: "Hadith #", kitab: "Kitab (Chapter)", bab: "Bab", numbering: "Numbering", site: "Website numbering", intl: "International numbering", ref: "Reference", grading: "Scholarly grading", intlNone: "This hadith is not available under international numbering. Try another number or switch to website numbering.", fail: "This hadith could not be loaded. Please try again.", warn: "The primary source could not be reached, so this text comes from a backup source whose hadith numbering and chapters may differ." },
+    ar: { book: "الكتاب", hadith: "حديث رقم", kitab: "الكتاب (الفصل)", bab: "الباب", numbering: "الترقيم", site: "ترقيم الموقع", intl: "الترقيم الدولي", ref: "المرجع", grading: "حكم العلماء", intlNone: "هذا الحديث غير متوفر بالترقيم الدولي. جرّب رقماً آخر أو انتقل إلى ترقيم الموقع.", fail: "تعذر جلب هذا الحديث. حاول مرة أخرى.", warn: "تعذر الوصول إلى المصدر الأصلي، فالنص من مصدر احتياطي قد يختلف ترقيم أحاديثه وأبوابه." },
+    ur: { book: "کتاب", hadith: "حدیث نمبر", kitab: "کتاب (باب الکتاب)", bab: "باب", numbering: "نمبرنگ", site: "ویب سائٹ کی نمبرنگ", intl: "بین الاقوامی نمبرنگ", ref: "حوالہ", grading: "علماء کا حکم", intlNone: "یہ حدیث بین الاقوامی نمبرنگ میں دستیاب نہیں۔ کوئی اور نمبر آزمائیں یا ویب سائٹ کی نمبرنگ پر جائیں۔", fail: "یہ حدیث حاصل نہیں ہو سکی۔ دوبارہ کوشش کریں۔", warn: "بنیادی ذریعہ تک رسائی نہیں ہو سکی، اس لیے متن متبادل ذریعے سے ہے جس کے حدیث نمبر اور ابواب مختلف ہو سکتے ہیں۔" }
   }[currentLang] || {};
 
   if (data.is_fallback) {
     el.className = "fetch-notice error";
-    el.textContent = L.fail;
+    el.textContent = data.unavailable_reason ? L.intlNone : L.fail;
     el.style.display = "block";
     return;
   }
 
   const bookName = currentLang === 'ar' ? data.book_name_ar : (currentLang === 'ur' ? data.book_name_ur : data.book_name_en);
+
+  if (data.numbering === "international") {
+    const refText = data.reference && data.reference.hadith !== undefined && data.reference.hadith !== ""
+      ? `${L.book} ${data.reference.book}, ${L.hadith} ${data.reference.hadith}` : "";
+    const gradesText = (data.grades || []).map(g => `${g.name}: ${g.grade}`).join(" - ");
+    const textRow = (label, value) => value ? `
+      <div class="source-row">
+        <span class="source-label">${label}</span>
+        <span class="source-value"><span class="source-primary">${value}</span></span>
+      </div>` : "";
+    el.className = "fetch-notice source-card" + (data.source_warning ? " warn" : "");
+    el.innerHTML = `
+      ${textRow(L.book, `${bookName} - ${L.hadith} ${data.hadith_number}`)}
+      ${textRow(L.numbering, L.intl)}
+      ${textRow(L.kitab, data.chapter_en)}
+      ${textRow(L.ref, refText)}
+      ${textRow(L.grading, gradesText)}
+    `;
+    el.style.display = "block";
+    return;
+  }
+
   const babAr = splitBabNumber(data.bab_ar);
   const babUr = splitBabNumber(data.bab_ur);
   const babNumber = babAr.number || babUr.number;
@@ -689,6 +712,21 @@ function renderIubBookButtons() {
   });
 }
 
+function setIubNumbering(mode) {
+  iubNumbering = mode === "international" ? "international" : "site";
+  document.querySelectorAll(".numbering-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-numbering") === iubNumbering);
+  });
+  const hint = document.getElementById("iubNumberingHint");
+  if (hint) {
+    const key = iubNumbering === "international" ? "numbering_hint_intl" : "numbering_hint_site";
+    hint.setAttribute("data-i18n", key);
+    hint.textContent = I18N[currentLang][key];
+  }
+  // Re-fetch the same hadith under the other numbering system
+  if (lastFetchedIubData) fetchFromIslamicUrduBooks();
+}
+
 function selectIubBook(bookId) {
   const bookInput = document.getElementById("iubBookSelect");
   if (bookInput) bookInput.value = bookId;
@@ -710,7 +748,7 @@ async function fetchFromIslamicUrduBooks() {
   if (btn) btn.disabled = true;
 
   try {
-    const res = await fetch(`/api/islamicurdubooks/fetch?book_id=${bookId}&hadith_number=${encodeURIComponent(hadithNumber)}`);
+    const res = await fetch(`/api/islamicurdubooks/fetch?book_id=${bookId}&hadith_number=${encodeURIComponent(hadithNumber)}&numbering=${iubNumbering}`);
     if (!res.ok) {
       throw new Error(`API returned status ${res.status}`);
     }
@@ -820,6 +858,24 @@ async function verifyFetchedIubHadith() {
   if (!fetchedMatn.matn_en) fetchedMatn.matn_en = currentLang === "en" ? "English translation is not available for this hadith." : fetchedMatn.matn_ar;
   if (!fetchedMatn.matn_ur) fetchedMatn.matn_ur = "اس حدیث کا اردو ترجمہ دستیاب نہیں۔";
 
+  // A fetched hadith that is one of the benchmark hadiths is verified with the
+  // benchmark's curated chain rather than names guessed from the text
+  const bench = findBenchmarkMatch(lastFetchedIubData.arabic_text || "");
+  if (bench) {
+    currentHadithId = bench.id;
+    customChainNarrators = [...bench.narrator_ids];
+    customChainFormulas = [...bench.transmission_formulas];
+    chainDisplayNames = null;
+    const corroBox = document.getElementById("corroboratedCheck");
+    if (corroBox) corroBox.checked = !!bench.corroborated;
+    document.querySelectorAll(".preset-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-preset-id") === bench.id);
+    });
+    renderChainBuilder();
+    await runVerification();
+    return;
+  }
+
   try {
     const res = await fetch("/api/islamicurdubooks/import-and-verify", {
       method: "POST",
@@ -827,6 +883,7 @@ async function verifyFetchedIubHadith() {
       body: JSON.stringify({
         book_id: bookId,
         hadith_number: hadithNumber,
+        numbering: iubNumbering,
         corroborated: !!(document.getElementById("corroboratedCheck") || {}).checked
       })
     });

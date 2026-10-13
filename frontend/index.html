@@ -81,6 +81,15 @@
           </h3>
 
           <div class="form-group">
+            <label class="form-label" data-i18n="numbering_label">Hadith numbering:</label>
+            <div class="numbering-toggle" id="iubNumberingToggle">
+              <button type="button" class="numbering-btn active" data-numbering="site" onclick="setIubNumbering('site')" data-i18n="numbering_site">Website numbering</button>
+              <button type="button" class="numbering-btn" data-numbering="international" onclick="setIubNumbering('international')" data-i18n="numbering_intl">International numbering (Sunnah.com style)</button>
+            </div>
+            <div class="numbering-hint" id="iubNumberingHint" data-i18n="numbering_hint_site">Numbers follow the original source's own system.</div>
+          </div>
+
+          <div class="form-group">
             <label class="form-label" data-i18n="iub_select_book">Select Hadith Collection:</label>
             <input type="hidden" id="iubBookSelect" value="">
             <div class="book-buttons-grid" id="iubBookButtons"></div>

@@ -1442,3 +1442,30 @@ body {
 .source-label { flex: none; }
 .source-value { align-items: center; width: 100%; }
 .source-warning { text-align: center; }
+
+/* Numbering toggle */
+.numbering-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.numbering-btn {
+  flex: 1 1 220px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.numbering-btn:hover { border-color: var(--accent-gold); }
+.numbering-btn.active {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 1px var(--accent-gold), 0 0 12px var(--accent-gold-glow);
+  color: var(--text-gold);
+}
+.numbering-hint { margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
