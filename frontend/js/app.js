@@ -2,6 +2,61 @@
  * Main Application Controller for Hadith Verification Web Application
  */
 
+// Localised labels shared by the chain list, diagram and directory
+const FORMULA_NAMES = {
+  "haddathana": { en: "Haddathana", ar: "حَدَّثَنَا", ur: "حَدَّثَنَا" },
+  "akhbarana": { en: "Akhbarana", ar: "أَخْبَرَنَا", ur: "أَخْبَرَنَا" },
+  "sami'tu": { en: "Sami'tu", ar: "سَمِعْتُ", ur: "سَمِعْتُ" },
+  "an": { en: "'An (Mu'an'an)", ar: "عَنْ", ur: "عَنْ" },
+  "qala": { en: "Qala", ar: "قَالَ", ur: "قَالَ" }
+};
+
+function formulaNameFor(f) {
+  const names = FORMULA_NAMES[f];
+  return names ? (names[currentLang] || names.en) : f;
+}
+
+const TIER_NAMES = {
+  prophetic_source: { en: "Prophetic source", ar: "المصدر النبوي", ur: "نبوی ماخذ" },
+  sahabi_adl: { en: "Sahabi ('Adl)", ar: "صحابي عدل", ur: "عادل صحابی" },
+  thiqah_hafiz: { en: "Thiqah Hafiz", ar: "ثقة حافظ", ur: "ثقہ حافظ" },
+  thiqah_thabt: { en: "Thiqah Thabt", ar: "ثقة ثبت", ur: "ثقہ ثبت" },
+  saduq: { en: "Saduq", ar: "صدوق", ur: "صدوق" },
+  saduq_yahim: { en: "Saduq Yahim", ar: "صدوق يهم", ur: "صدوق (وہم والا)" },
+  daif: { en: "Da'if", ar: "ضعيف", ur: "ضعیف" },
+  matruk: { en: "Matruk", ar: "متروك", ur: "متروک" },
+  kadhdhab: { en: "Kadhdhab", ar: "كذاب", ur: "کذاب" }
+};
+
+function tierName(code) {
+  const names = TIER_NAMES[code];
+  return names ? (names[currentLang] || names.en) : code;
+}
+
+const CITY_NAMES = {
+  Madinah: { ar: "المدينة المنورة", ur: "مدینہ منورہ" },
+  Makkah: { ar: "مكة المكرمة", ur: "مکہ مکرمہ" },
+  Basra: { ar: "البصرة", ur: "بصرہ" },
+  Kufa: { ar: "الكوفة", ur: "کوفہ" },
+  Bukhara: { ar: "بخارى", ur: "بخارا" },
+  Termez: { ar: "ترمذ", ur: "ترمذ" },
+  Marw: { ar: "مرو", ur: "مرو" },
+  Egypt: { ar: "مصر", ur: "مصر" },
+  Hijaz: { ar: "الحجاز", ur: "حجاز" },
+  Baghdad: { ar: "بغداد", ur: "بغداد" },
+  Nishapur: { ar: "نيسابور", ur: "نیشاپور" },
+  Qazwin: { ar: "قزوين", ur: "قزوین" },
+  Damascus: { ar: "دمشق", ur: "دمشق" },
+  Wasit: { ar: "واسط", ur: "واسط" },
+  Khurasan: { ar: "خراسان", ur: "خراسان" }
+};
+
+function cityName(city) {
+  const c = city || "Hijaz";
+  const names = CITY_NAMES[c];
+  return names && names[currentLang] ? names[currentLang] : c;
+}
+
 let currentHadithId = "hadith_niyyah";
 let customChainNarrators = [
   "al_bukhari",
@@ -248,7 +303,8 @@ function renderChainBuilder() {
     let generation = "";
     if (rawi) {
       name = currentLang === "ar" ? rawi.name_ar : (currentLang === "ur" ? rawi.name_ur : rawi.name_en);
-      generation = rawi.generation;
+      generation = currentLang === "ar" ? (rawi.generation_ar || rawi.generation)
+                 : (currentLang === "ur" ? (rawi.generation_ur || rawi.generation) : rawi.generation);
     }
     if (chainDisplayNames && chainDisplayNames[index]) {
       name = chainDisplayNames[index];
@@ -257,7 +313,7 @@ function renderChainBuilder() {
     let formulaHtml = "";
     if (index < customChainNarrators.length - 1) {
       const f = customChainFormulas[index] || "haddathana";
-      formulaHtml = `<span class="formula-label">${FORMULA_LABELS[f] || f}</span>`;
+      formulaHtml = `<span class="formula-label">${formulaNameFor(f)}</span>`;
     }
 
     row.innerHTML = `
@@ -372,7 +428,6 @@ function renderVerificationResults(res, activeHadith) {
         <span class="verdict-tag">${I18N[currentLang].verdict_label}</span>
         <div class="verdict-title">
           <span>${verdictText}</span>
-          ${verdictText !== res.verdict ? `<span style="font-size: 1.1rem; opacity: 0.85;">(${res.verdict})</span>` : ""}
         </div>
         <div class="verdict-subtitle">${subVerdictText}</div>
       </div>
@@ -420,7 +475,7 @@ function renderVerificationResults(res, activeHadith) {
         <ul class="rule-details-list">
           ${detailsHtml}
         </ul>
-        ${rule.scholar_reference ? `<div class="rule-scholar-footnote">📖 ${rule.scholar_reference}</div>` : ''}
+        ${rule.scholar_reference && currentLang === "en" ? `<div class="rule-scholar-footnote">📖 ${rule.scholar_reference}</div>` : ''}
       `;
       rulesListEl.appendChild(card);
     });
@@ -433,16 +488,21 @@ function renderVerificationResults(res, activeHadith) {
   const matnContainer = document.getElementById("matnDisplayContainer");
   if (matnContainer) {
     const matnAr = activeHadith ? activeHadith.matn_ar : (res.matn ? res.matn.ar : "");
-    const matnTrans = currentLang === "ur" ?
-      (activeHadith ? activeHadith.matn_ur : (res.matn ? res.matn.ur : "")) :
-      (activeHadith ? activeHadith.matn_en : (res.matn ? res.matn.en : ""));
+    // The Arabic view shows the Arabic text only; Urdu and English views add their translation
+    let matnTrans = "";
+    if (currentLang === "ur") {
+      matnTrans = activeHadith ? activeHadith.matn_ur : (res.matn ? res.matn.ur : "");
+    } else if (currentLang === "en") {
+      matnTrans = activeHadith ? activeHadith.matn_en : (res.matn ? res.matn.en : "");
+    }
 
     matnContainer.innerHTML = `
       <div class="matn-display-box">
         <div class="matn-quote-text">${matnAr}</div>
+        ${matnTrans ? `
         <div class="matn-translation-text">
-          <strong>${currentLang === 'ur' ? 'اردو ترجمہ:' : 'Translation:'}</strong> ${matnTrans}
-        </div>
+          <strong>${I18N[currentLang].translation_label}</strong> ${matnTrans}
+        </div>` : ""}
       </div>
     `;
   }
@@ -490,21 +550,25 @@ function renderCorpusLibrary(query = "") {
     };
 
     const title = currentLang === "ar" ? item.title_ar : (currentLang === "ur" ? item.title_ur : item.title_en);
-    const trans = currentLang === "ur" ? item.matn_ur : item.matn_en;
+    const trans = currentLang === "ur" ? item.matn_ur : (currentLang === "en" ? item.matn_en : "");
+    const gradeInfo = GRADES[item.known_verdict];
+    const subVerdict = gradeInfo
+      ? (currentLang === "ar" ? gradeInfo.sub_ar : (currentLang === "ur" ? gradeInfo.sub_ur : gradeInfo.sub_en))
+      : item.known_sub_verdict;
 
     card.innerHTML = `
       <div>
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
           <span class="preset-badge ${item.badge_class}">${gradeLabel(item.known_verdict)}</span>
-          <span style="font-size: 0.8rem; color: var(--text-muted);">${item.book}</span>
+          ${currentLang === "en" ? `<span style="font-size: 0.8rem; color: var(--text-muted);">${item.book}</span>` : ""}
         </div>
         <h4 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary);">${title}</h4>
         <div class="arabic-text" style="font-size: 1.1rem; line-height: 1.9; margin-bottom: 0.65rem; color: var(--text-primary);">${item.matn_ar.slice(0, 140)}...</div>
-        <div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${trans.slice(0, 160)}...</div>
+        ${trans ? `<div style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${trans.slice(0, 160)}...</div>` : ""}
       </div>
       <div style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
-        <span style="font-size: 0.78rem; color: var(--text-gold); font-weight: 600;">${item.known_sub_verdict}</span>
-        <span style="font-size: 0.82rem; color: var(--text-emerald); font-weight: 600;">Verify Chain →</span>
+        <span style="font-size: 0.78rem; color: var(--text-gold); font-weight: 600;">${subVerdict}</span>
+        <span style="font-size: 0.82rem; color: var(--text-emerald); font-weight: 600;">${I18N[currentLang].verify_chain}</span>
       </div>
     `;
     grid.appendChild(card);
@@ -544,10 +608,10 @@ function renderRijalDirectory(query = "") {
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.65rem;">
         <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--text-primary);">${name}</h4>
-        <span class="rawi-node-tier ${rawi.reliability_tier}">${rawi.reliability_tier}</span>
+        <span class="rawi-node-tier ${rawi.reliability_tier}">${tierName(rawi.reliability_tier)}</span>
       </div>
       <div style="font-size: 0.8rem; color: var(--text-gold); margin-bottom: 0.5rem;">
-        <span>${gen}</span> • <span>${rawi.death_hijri ? rawi.death_hijri + ' AH' : 'N/A'}</span> • <span>${rawi.city || 'Hijaz'}</span>
+        <span>${gen}</span> • <span>${rawi.death_hijri ? rawi.death_hijri + ' ' + I18N[currentLang].year_ah : I18N[currentLang].not_available}</span> • <span>${cityName(rawi.city)}</span>
       </div>
       <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">${notes}</p>
     `;

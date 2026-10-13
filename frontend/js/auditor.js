@@ -110,7 +110,7 @@ function renderAuditorWizard() {
   container.innerHTML = `
     <div class="glass-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-        <span class="rule-score-badge pass" style="font-size: 0.85rem;">Rule ${auditorState.currentStep} of 5</span>
+        <span class="rule-score-badge pass" style="font-size: 0.85rem;">${I18N[currentLang].rule_n_of_5.replace("{n}", auditorState.currentStep)}</span>
         <div style="display: flex; gap: 0.5rem;">
           ${[1, 2, 3, 4, 5].map(step => `
             <div style="width: 12px; height: 12px; border-radius: 50%; background: ${step === auditorState.currentStep ? 'var(--accent-gold)' : (step < auditorState.currentStep ? 'var(--accent-emerald)' : 'var(--border-subtle)')};"></div>

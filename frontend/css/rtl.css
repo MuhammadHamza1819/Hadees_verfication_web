@@ -199,6 +199,7 @@
   box-sizing: border-box;
 }
 
+/* min-width only: a max-width here would override the 1400px page width and stretch the layout */
 [dir="rtl"] .header-container,
 [dir="rtl"] .verifier-layout,
 [dir="rtl"] .glass-card,
@@ -206,7 +207,6 @@
 [dir="rtl"] .app-main,
 [dir="rtl"] .tab-panel {
   min-width: 0;
-  max-width: 100%;
 }
 
 [dir="rtl"] .hero-content h2,

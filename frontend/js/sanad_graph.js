@@ -69,7 +69,7 @@ function renderSanadGraph(containerId, chainNodes, chainEdges) {
     nodeEl.onclick = () => showNarratorDetailModal(node.id || node.name_en);
 
     nodeEl.innerHTML = `
-      <div class="rawi-node-step">Stage ${node.step || idx + 1}</div>
+      <div class="rawi-node-step">${I18N[currentLang].stage_word} ${node.step || idx + 1}</div>
       <div class="rawi-node-name">${displayName}</div>
       <div class="rawi-node-tier ${tierClass}">${displayTier}</div>
     `;
@@ -86,7 +86,7 @@ function renderSanadGraph(containerId, chainNodes, chainEdges) {
       const isWarn = edge.has_warning;
 
       arrowEl.innerHTML = `
-        <span class="formula-tag" style="color: ${isWarn ? 'var(--color-daif)' : 'var(--text-gold)'}">${formulaName}</span>
+        <span class="formula-tag" style="color: ${isWarn ? 'var(--color-daif)' : 'var(--text-gold)'}">${formulaNameFor(formulaName)}</span>
         <div class="link-line ${isWarn ? 'warning' : ''}"></div>
       `;
       flowWrapper.appendChild(arrowEl);
@@ -119,8 +119,8 @@ function showNarratorDetailModal(rawiId) {
   if (metaEl) {
     metaEl.innerHTML = `
       <span>🏛️ ${gen}</span> • 
-      <span>📅 ${rawi.death_hijri ? rawi.death_hijri + ' AH' : 'N/A'}</span> • 
-      <span>📍 ${rawi.city || 'Hijaz'}</span>
+      <span>📅 ${rawi.death_hijri ? rawi.death_hijri + ' ' + I18N[currentLang].year_ah : I18N[currentLang].not_available}</span> • 
+      <span>📍 ${cityName(rawi.city)}</span>
     `;
   }
   if (notesEl) notesEl.textContent = notes;
@@ -128,11 +128,11 @@ function showNarratorDetailModal(rawiId) {
     metricsEl.innerHTML = `
       <div style="display: flex; gap: 1rem; margin-top: 1rem; background: var(--bg-tertiary); padding: 0.85rem; border-radius: var(--radius-sm);">
         <div style="flex: 1; text-align: center;">
-          <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">'Adalah (Integrity)</div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">${I18N[currentLang].adalah_metric}</div>
           <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-emerald);">${rawi.integrity_score || 100}%</div>
         </div>
         <div style="flex: 1; text-align: center; border-left: 1px solid var(--border-subtle);">
-          <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">Dabt (Precision)</div>
+          <div style="font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase;">${I18N[currentLang].dabt_metric}</div>
           <div style="font-size: 1.3rem; font-weight: 800; color: var(--text-gold);">${rawi.memory_score || 95}%</div>
         </div>
       </div>
