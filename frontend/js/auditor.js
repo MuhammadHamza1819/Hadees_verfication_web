@@ -202,7 +202,7 @@ function calculateAuditorVerdict() {
       <div class="verdict-badge-large">
         <span class="verdict-tag">${I18N[currentLang].verdict_label}</span>
         <div class="verdict-title">${title}</div>
-        <div class="verdict-subtitle">Audited via Classical Usul al-Hadith Methodology</div>
+        <div class="verdict-subtitle">${I18N[currentLang].audited_via}</div>
       </div>
       <div class="verdict-score-ring">
         <div class="score-number">${score}%</div>

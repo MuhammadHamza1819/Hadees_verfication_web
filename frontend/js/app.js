@@ -680,6 +680,39 @@ function splitBabNumber(text) {
   return m ? { number: m[1], title: m[2].trim() } : { number: "", title: (text || "").trim() };
 }
 
+// Scholar names and grading words come from the source in English; show them in the interface language
+const SCHOLAR_NAMES = [
+  [/al-?albani/i, { ar: "الألباني", ur: "البانی" }],
+  [/zubair\s*['`]?ali\s*za['`]?i/i, { ar: "الزبير علي زئي", ur: "زبیر علی زئی" }],
+  [/darussalam/i, { ar: "دار السلام", ur: "دارالسلام" }],
+  [/shu['`]?a[iy]b/i, { ar: "شعيب الأرناؤوط", ur: "شعیب الارنؤوط" }],
+  [/ahmad muhammad shakir/i, { ar: "أحمد محمد شاكر", ur: "احمد محمد شاکر" }],
+  [/abu ghuddah/i, { ar: "أبو غدة", ur: "ابو غدہ" }],
+  [/fou?ad ['`]?abd al-?baqi/i, { ar: "محمد فؤاد عبد الباقي", ur: "محمد فواد عبدالباقی" }],
+  [/muhammad muhyi/i, { ar: "محمد محيي الدين", ur: "محمد محیی الدین" }],
+  [/salim al-?hilali/i, { ar: "سليم الهلالي", ur: "سلیم الہلالی" }]
+];
+const GRADE_WORDS = [
+  [/hasan\s*sahih/i, { ar: "حسن صحيح", ur: "حسن صحیح" }],
+  [/sahih\s*li[- ]?ghayrihi/i, { ar: "صحيح لغيره", ur: "صحیح لغیرہ" }],
+  [/hasan\s*li[- ]?ghayrihi/i, { ar: "حسن لغيره", ur: "حسن لغیرہ" }],
+  [/sahih/i, { ar: "صحيح", ur: "صحیح" }],
+  [/hasan/i, { ar: "حسن", ur: "حسن" }],
+  [/da['`]?if/i, { ar: "ضعيف", ur: "ضعیف" }],
+  [/mawdu/i, { ar: "موضوع", ur: "موضوع" }],
+  [/munkar/i, { ar: "منكر", ur: "منکر" }]
+];
+
+function localizeFrom(table, text) {
+  if (currentLang === "en") return text;
+  for (const [pattern, names] of table) {
+    if (pattern.test(text)) return names[currentLang] || text;
+  }
+  return text;
+}
+function localizeScholar(name) { return localizeFrom(SCHOLAR_NAMES, name || ""); }
+function localizeGradeWord(grade) { return localizeFrom(GRADE_WORDS, grade || ""); }
+
 function showFetchNotice(data) {
   const el = document.getElementById("iubFetchNotice");
   if (!el) return;
@@ -702,7 +735,7 @@ function showFetchNotice(data) {
   if (data.numbering === "international") {
     const refText = data.reference && data.reference.hadith !== undefined && data.reference.hadith !== ""
       ? `${L.book} ${data.reference.book}, ${L.hadith} ${data.reference.hadith}` : "";
-    const gradesText = (data.grades || []).map(g => `${g.name}: ${g.grade}`).join(" - ");
+    const gradesText = (data.grades || []).map(g => `${localizeScholar(g.name)}: ${localizeGradeWord(g.grade)}`).join(" - ");
     const textRow = (label, value) => value ? `
       <div class="source-row">
         <span class="source-label">${label}</span>
@@ -712,7 +745,7 @@ function showFetchNotice(data) {
     el.innerHTML = `
       ${textRow(L.book, `${bookName} - ${L.hadith} ${data.hadith_number}`)}
       ${textRow(L.numbering, L.intl)}
-      ${textRow(L.kitab, data.chapter_en)}
+      ${currentLang === "en" ? textRow(L.kitab, data.chapter_en) : ""}
       ${textRow(L.ref, refText)}
       ${textRow(L.grading, gradesText)}
     `;

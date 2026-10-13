@@ -12,7 +12,7 @@ function renderSanadGraph(containerId, chainNodes, chainEdges) {
   flowWrapper.className = "sanad-chain-flow";
 
   if (!chainNodes || chainNodes.length === 0) {
-    flowWrapper.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No chain data available to render.</p>`;
+    flowWrapper.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 2rem;">${I18N[currentLang].no_chain_data}</p>`;
     container.appendChild(flowWrapper);
     return;
   }

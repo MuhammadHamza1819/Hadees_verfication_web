@@ -46,8 +46,8 @@
           <button class="lang-btn" data-lang-btn="ur" onclick="setLanguage('ur')">اردو</button>
         </div>
 
-        <button class="theme-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode">☀️</button>
-        <button class="export-btn" id="exportReportBtn" onclick="exportTahqiqReport()" title="Print / Export Tahqiq Certificate">🖨️</button>
+        <button class="theme-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" data-i18n-title="theme_toggle_title">☀️</button>
+        <button class="export-btn" id="exportReportBtn" onclick="exportTahqiqReport()" title="Print / Export Tahqiq Certificate" data-i18n-title="export_title">🖨️</button>
       </div>
     </div>
   </header>
@@ -247,11 +247,11 @@
     <!-- TAB 6: Usul al-Hadith Rules Guide -->
     <div id="tabRules" class="tab-panel">
       <div class="glass-card" style="margin-bottom: 1.75rem;">
-        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-gold);">
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--text-gold);" data-i18n="rules_title">
           أصول وقواعد مصطلح الحديث (The 5 Golden Criteria of Sahih Hadith)
         </h2>
         <p style="color: var(--text-secondary); line-height: 1.7;">
-          As defined by Ibn al-Salah (d. 643H) in his famous <em>Muqaddimah</em> and adopted by Al-Nawawi, Ibn Hajar, and the consensus of Hadith masters:
+          <span data-i18n-html="rules_intro">As defined by Ibn al-Salah (d. 643H) in his famous <em>Muqaddimah</em> and adopted by Al-Nawawi, Ibn Hajar, and the consensus of Hadith masters:</span>
           <br>
           <span class="arabic-text" style="color: var(--text-emerald); display: block; margin: 0.5rem 0;">
             "هو الحديث المسند الذي يتصل إسناده بنقل العدل الضابط عن العدل الضابط إلى منتهاه ولا يكون شاذاً ولا معللاً."
@@ -262,61 +262,56 @@
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.5rem;">
         
         <div class="glass-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.65rem;">
-            1. اتصال السند (Chain Continuity)
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.65rem;" data-i18n="rule1_title">1. اتصال السند (Chain Continuity)
           </h3>
-          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;" data-i18n="rule1_desc">
             Every narrator in the isnad must have received the Hadith directly from their teacher without any missing link from the compiler up to the Prophet ﷺ.
           </p>
-          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-emerald);">
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-emerald);" data-i18n-html="rule1_note">
             <strong>Chain Breaks:</strong> Mu'allaq (beginning missing), Mursal (companion missing), Mu'dal (2+ consecutive missing), Munqati' (1 missing in middle).
           </div>
         </div>
 
         <div class="glass-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 0.65rem;">
-            2. عدالة الرواة (Moral Probity of Narrators)
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--accent-gold); margin-bottom: 0.65rem;" data-i18n="rule2_title">2. عدالة الرواة (Moral Probity of Narrators)
           </h3>
-          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;" data-i18n="rule2_desc">
             Each narrator must be a sane, adult Muslim, free from major sins (Fisq), innovations (Bid'ah), or any reputation of falsehood. All Companions (Sahabah) are upright by divine endorsement.
           </p>
-          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-gold);">
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-gold);" data-i18n-html="rule2_note">
             <strong>Jarh Deficiencies:</strong> Kadhdhab (fabricator - causes Mawdu'), Matruk (abandoned), Majhul (unknown narrator).
           </div>
         </div>
 
         <div class="glass-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-hasan); margin-bottom: 0.65rem;">
-            3. ضبط الرواة (Retentive Memory Precision)
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--color-hasan); margin-bottom: 0.65rem;" data-i18n="rule3_title">3. ضبط الرواة (Retentive Memory Precision)
           </h3>
-          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;" data-i18n="rule3_desc">
             Narrators must possess precision, either through flawless oral memory (Dabt al-Sadr) or preserved written manuscripts (Dabt al-Kitab).
           </p>
-          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-hasan);">
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid var(--color-hasan);" data-i18n-html="rule3_note">
             <strong>Distinction:</strong> Tamam al-Dabt (perfect memory -> Sahih) vs. Khafif al-Dabt (sound with slight deficit -> Hasan).
           </div>
         </div>
 
         <div class="glass-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: #A855F7; margin-bottom: 0.65rem;">
-            4. السلامة من الشذوذ (Non-Anomaly)
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: #A855F7; margin-bottom: 0.65rem;" data-i18n="rule4_title">4. السلامة من الشذوذ (Non-Anomaly)
           </h3>
-          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;" data-i18n="rule4_desc">
             A reliable narrator's report must not contradict reports from narrators who are more trustworthy (Awthaq) or greater in number.
           </p>
-          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #A855F7;">
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #A855F7;" data-i18n-html="rule4_note">
             <strong>Classifications:</strong> Shadhdh (anomalous report) vs. Mahfuz (sound preserved report); Munkar (weak contradicting sound).
           </div>
         </div>
 
         <div class="glass-card">
-          <h3 style="font-size: 1.2rem; font-weight: 700; color: #EC4899; margin-bottom: 0.65rem;">
-            5. السلامة من العلة القادحة (Absence of Hidden Defect)
+          <h3 style="font-size: 1.2rem; font-weight: 700; color: #EC4899; margin-bottom: 0.65rem;" data-i18n="rule5_title">5. السلامة من العلة القادحة (Absence of Hidden Defect)
           </h3>
-          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          <p style="font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.75rem;" data-i18n="rule5_desc">
             The report must be free from subtle, hidden defects ('Illah Qadihah) that invalidate authenticity despite an apparently sound exterior.
           </p>
-          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #EC4899;">
+          <div style="font-size: 0.8rem; background: var(--bg-tertiary); padding: 0.65rem; border-radius: var(--radius-sm); border-left: 3px solid #EC4899;" data-i18n-html="rule5_note">
             <strong>Subtle Flaws:</strong> Idraj (inserted text into Matn), Irsal Khafi (concealed drop), and subtle Tadlis.
           </div>
         </div>
@@ -340,7 +335,7 @@
   <!-- Footer -->
   <footer class="app-footer">
     <div class="footer-quote">«إِنَّ هَذَا الْعِلْمَ دِينٌ، فَانْظُرُوا عَمَّنْ تَأْخُذُونَ دِينَكُمْ»</div>
-    <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+    <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.5rem;" data-i18n="footer_attribution">
       — Muhammad ibn Sirin (رحمه الله), Sahih Muslim Muqaddimah
     </div>
     <p data-i18n="footer_text">
