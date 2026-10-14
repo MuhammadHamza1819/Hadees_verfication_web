@@ -200,12 +200,12 @@ def get_rules_documentation():
     }
 
 # IslamicUrduBooks.com Endpoints
-from backend.islamic_urdu_books import fetch_hadith, ISLAMIC_URDU_BOOKS
+from backend.islamic_urdu_books import fetch_hadith, ISLAMIC_URDU_BOOKS, list_books_with_availability
 
 @app.get("/api/islamicurdubooks/books")
-def get_islamic_urdu_books():
-    """List all canonical books available on IslamicUrduBooks.com."""
-    return ISLAMIC_URDU_BOOKS
+async def get_islamic_urdu_books():
+    """List all canonical books, marked with whether international numbering exists for each."""
+    return await list_books_with_availability()
 
 @app.get("/api/islamicurdubooks/fetch")
 async def fetch_from_islamic_urdu_books(book_id: int = Query(1), hadith_number: str = Query("1"), numbering: str = Query("site")):

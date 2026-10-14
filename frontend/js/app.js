@@ -713,6 +713,12 @@ function localizeFrom(table, text) {
 function localizeScholar(name) { return localizeFrom(SCHOLAR_NAMES, name || ""); }
 function localizeGradeWord(grade) { return localizeFrom(GRADE_WORDS, grade || ""); }
 
+// True when the selected book has no international (Sunnah.com style) numbering
+function bookLacksInternational(bookId) {
+  const book = iubCollectionsList.find(b => b.id.toString() === String(bookId));
+  return !!book && book.international_available === false;
+}
+
 function showFetchNotice(data) {
   const el = document.getElementById("iubFetchNotice");
   if (!el) return;
@@ -781,9 +787,11 @@ function showFetchNotice(data) {
   const chapter = pickText(data.chapter_ar, data.chapter_ur);
   const babText = pickText(babAr.title, babUr.title);
 
+  const noIntl = data.numbering !== "international" && bookLacksInternational(data.book_id);
   el.className = "fetch-notice source-card" + (data.source_warning ? " warn" : "");
   el.innerHTML = `
     ${data.source_warning ? `<div class="source-warning">${L.warn}</div>` : ""}
+    ${noIntl ? `<div class="source-warning source-note">${I18N[currentLang].no_intl_for_book}</div>` : ""}
     ${row(L.book, { primary: `${bookName} - ${L.hadith} ${data.hadith_number}`, secondary: "" })}
     ${row(L.kitab, chapter)}
     ${row(babNumber ? `${L.bab} ${babNumber}` : L.bab, babText)}
@@ -804,6 +812,7 @@ function renderIubBookButtons() {
     btn.type = "button";
     btn.className = "book-btn" + (b.id.toString() === bookInput.value ? " active" : "");
     btn.innerHTML = `<span class="book-btn-name">${bookName}</span><span class="book-btn-count">${countStr}</span>`;
+    if (b.international_available === false) btn.title = I18N[currentLang].no_intl_for_book;
     btn.onclick = () => selectIubBook(b.id);
     grid.appendChild(btn);
   });

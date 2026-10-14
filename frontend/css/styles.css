@@ -1469,3 +1469,5 @@ body {
   color: var(--text-gold);
 }
 .numbering-hint { margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+.source-note { color: var(--text-muted); font-weight: 400; font-size: 0.9rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.55rem; }

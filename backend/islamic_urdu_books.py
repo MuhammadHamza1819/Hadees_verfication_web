@@ -677,6 +677,37 @@ async def fetch_from_hadith_cdn(book_id: int, hadith_number: str) -> Optional[Di
         }
 
 INTERNATIONAL_SOURCE = "international"
+EDITIONS_URL = "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions.json"
+_international_slugs: Optional[set] = None
+
+
+async def get_international_slugs() -> Optional[set]:
+    """Collections that actually exist in the international reference editions (cached)."""
+    global _international_slugs
+    if _international_slugs is not None:
+        return _international_slugs
+    try:
+        async with httpx.AsyncClient(timeout=6.0, follow_redirects=True) as client:
+            res = await client.get(EDITIONS_URL)
+            if res.status_code == 200:
+                _international_slugs = set(res.json().keys())
+    except Exception as e:
+        logger.warning(f"Could not read the international editions list: {e}")
+    return _international_slugs
+
+
+async def list_books_with_availability() -> List[Dict[str, Any]]:
+    """The book list, each marked with whether international numbering exists for it."""
+    slugs = await get_international_slugs()
+    books = []
+    for book in ISLAMIC_URDU_BOOKS:
+        item = dict(book)
+        slug = CDN_BOOK_SLUGS.get(book["id"])
+        # If the editions list cannot be read, assume available rather than hiding the option
+        item["international_available"] = bool(slug) and (slugs is None or slug in slugs)
+        books.append(item)
+    return books
+
 
 
 async def fetch_hadith_international(book_id: int, hadith_number: str) -> Dict[str, Any]:
