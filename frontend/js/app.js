@@ -751,7 +751,7 @@ function showFetchNotice(data) {
     el.innerHTML = `
       ${textRow(L.book, `${bookName} - ${L.hadith} ${data.hadith_number}`)}
       ${textRow(L.numbering, L.intl)}
-      ${currentLang === "en" ? textRow(L.kitab, data.chapter_en) : ""}
+      ${textRow(L.kitab, currentLang === "en" ? data.chapter_en : (data.chapter_ar || ""))}
       ${textRow(L.ref, refText)}
       ${textRow(L.grading, gradesText)}
     `;

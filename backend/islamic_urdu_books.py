@@ -27,6 +27,7 @@ except OSError:
     os.makedirs(CACHE_DIR, exist_ok=True)
 
 SITE_SOURCE = "islamicurdubooks"
+PARSER_VERSION = 2  # bump to ignore cached pages written by an older parser
 SITE_TIMEOUT = 8.0
 
 ISLAMIC_URDU_BOOKS = [
@@ -485,11 +486,42 @@ def parse_hadith_page(html: str, book_id: int, hadith_number: str) -> Dict[str, 
         if b_ar: bab_ar = b_ar.get_text(strip=True)
         if b_ur: bab_ur = b_ur.get_text(strip=True)
 
+    # A page can hold several text blocks: chapter headings / reports quoted without a number
+    # (labelled "Q1", "Q100") followed by the numbered hadith itself. Group the blocks in page
+    # order together with the number labels and the translations that belong to each.
+    groups = []
+    pending_labels = []
+    for el in soup.find_all(True):
+        classes = el.get("class") or []
+        if el.name == "span" and "hno_color" in classes and "fontcalibri" in classes:
+            pending_labels.append(el.get_text(strip=True))
+        elif el.name == "div" and (el.get("id") or "").endswith("_with"):
+            groups.append({"block": el, "labels": pending_labels, "urdu": []})
+            pending_labels = []
+        elif el.name == "div" and "hadith_urdu" in classes and groups:
+            groups[-1]["urdu"].append(el)
+
+    wanted = normalize_hadith_number(hadith_number)
+
+    def numeric_labels(group):
+        # Labels such as "Q100" are chapter headings, not hadith numbers
+        return [normalize_hadith_number(x) for x in group["labels"] if re.fullmatch(r"[\d\u0660-\u0669\u06f0-\u06f9]+", x.strip())]
+
+    chosen = None
+    for g in groups:
+        if wanted in numeric_labels(g):
+            chosen = g
+            break
+    if chosen is None:
+        numbered = [g for g in groups if numeric_labels(g)]
+        chosen = numbered[0] if numbered else (groups[-1] if groups else None)
+
     arabic_text = ""
     narrators = []
-    
-    tashkeel_div = soup.find("div", id=lambda x: x and "_with" in x) or soup.find("div", class_="hadith_arabic")
-    if tashkeel_div:
+    urdu_translations = []
+
+    if chosen:
+        tashkeel_div = chosen["block"]
         arabic_text = tashkeel_div.get_text(strip=True)
         for a in tashkeel_div.find_all("a", href=lambda h: h and "rawy-details.php" in h):
             rawy_name = a.get_text(strip=True)
@@ -504,24 +536,18 @@ def parse_hadith_page(html: str, book_id: int, hadith_number: str) -> Dict[str, 
                     "standard_id": std_id or ""
                 })
 
-    urdu_translations = []
-    urdu_divs = soup.find_all("div", class_="hadith_urdu")
-    tabs = soup.find_all("li", class_="nav-item")
-    
-    for idx, u_div in enumerate(urdu_divs):
-        u_text = u_div.get_text(strip=True)
-        u_text = re.sub(r"\[صحيح.*?\]", "", u_text).strip()
-        translator = "مترجم معتبر"
-        if idx < len(tabs):
-            t_link = tabs[idx].find("a")
-            if t_link:
-                translator = t_link.get_text(strip=True)
-        
-        if u_text and len(u_text) > 10:
-            urdu_translations.append({
-                "translator": translator,
-                "text": u_text
-            })
+        for u_div in chosen["urdu"]:
+            u_text = u_div.get_text(strip=True)
+            u_text = re.sub(r"\[صحيح.*?\]", "", u_text).strip()
+            translator = "مترجم معتبر"
+            tab_holder = u_div if (u_div.get("id") or "").startswith("tabcontent") else u_div.find_parent(id=re.compile(r"^tabcontent"))
+            tab_id = tab_holder.get("id") if tab_holder else None
+            if tab_id:
+                link = soup.find("a", href="#" + tab_id)
+                if link and link.get_text(strip=True):
+                    translator = link.get_text(strip=True)
+            if u_text and len(u_text) > 10:
+                urdu_translations.append({"translator": translator, "text": u_text})
 
     takhrij = ""
     takhrij_div = soup.find("div", class_="bab-detail")
@@ -677,6 +703,108 @@ async def fetch_from_hadith_cdn(book_id: int, hadith_number: str) -> Optional[Di
         }
 
 INTERNATIONAL_SOURCE = "international"
+SUNNAH_SOURCE = "sunnah"
+SUNNAH_API_BASE = "https://api.sunnah.com/v1"
+
+# Collection names used by the official Sunnah.com API for each of our book ids
+SUNNAH_COLLECTIONS = {
+    1: "bukhari",
+    2: "muslim",
+    3: "abudawud",
+    4: "tirmidhi",
+    5: "nasai",
+    6: "ibnmajah",
+    7: "malik",
+    8: "nawawi40",
+    9: "qudsi40",
+    10: "mishkat",
+}
+
+
+def sunnah_api_key() -> str:
+    """The Sunnah.com API key is read from the environment and never stored in the code."""
+    return os.environ.get("SUNNAH_API_KEY", "").strip()
+
+
+def _html_to_text(value: str) -> str:
+    if not value:
+        return ""
+    return BeautifulSoup(value, "html.parser").get_text(" ", strip=True)
+
+
+def parse_sunnah_hadith(payload: Dict[str, Any], book_id: int, hadith_number: str) -> Optional[Dict[str, Any]]:
+    """Convert an official Sunnah.com API hadith object into our hadith format."""
+    entries = payload.get("hadith") or []
+    by_lang = {e.get("lang"): e for e in entries if isinstance(e, dict)}
+    arabic = by_lang.get("ar") or {}
+    english = by_lang.get("en") or {}
+
+    arabic_text = _html_to_text(arabic.get("body", ""))
+    english_text = _html_to_text(english.get("body", ""))
+    if not arabic_text and not english_text:
+        return None
+
+    book_info = next((x for x in ISLAMIC_URDU_BOOKS if x["id"] == book_id), {
+        "id": book_id, "name_ar": "كتاب حديث", "name_ur": "کتاب حدیث", "name_en": "Hadith Book"
+    })
+
+    grades = []
+    for entry in (english, arabic):
+        for g in entry.get("grades") or []:
+            if isinstance(g, dict) and g.get("grade"):
+                grades.append({"name": g.get("graded_by", ""), "grade": g.get("grade", "")})
+        if grades:
+            break
+
+    narrators = extract_sanad_narrators(arabic_text) if arabic_text else []
+    translations = []
+    if english_text:
+        translations.append({"translator": f"{book_info['name_en']} - English Translation", "text": english_text})
+
+    chapter_ar = _html_to_text(arabic.get("chapterTitle", ""))
+    chapter_en = _html_to_text(english.get("chapterTitle", ""))
+
+    return {
+        "book_id": book_id,
+        "book_name_ar": book_info["name_ar"],
+        "book_name_ur": book_info["name_ur"],
+        "book_name_en": book_info["name_en"],
+        "hadith_number": str(payload.get("hadithNumber") or hadith_number),
+        "chapter_ar": chapter_ar,
+        "chapter_ur": "",
+        "chapter_en": chapter_en,
+        "bab_ar": "",
+        "bab_ur": "",
+        "reference": {"book": payload.get("bookNumber", ""), "hadith": payload.get("hadithNumber", "")},
+        "grades": grades,
+        "arabic_text": arabic_text or english_text,
+        "sanad_narrators": narrators,
+        "urdu_translations": translations,
+        "english_translation": english_text,
+        "numbering": "international",
+        "source": SUNNAH_SOURCE,
+        "is_fallback": False,
+    }
+
+
+async def fetch_from_sunnah_api(book_id: int, hadith_number: str) -> Optional[Dict[str, Any]]:
+    """Fetch one hadith from the official Sunnah.com API. Returns None if unavailable."""
+    key = sunnah_api_key()
+    collection = SUNNAH_COLLECTIONS.get(book_id)
+    if not key or not collection:
+        return None
+    url = f"{SUNNAH_API_BASE}/collections/{collection}/hadiths/{hadith_number}"
+    try:
+        async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+            res = await client.get(url, headers={"X-API-Key": key, "Accept": "application/json"})
+        if res.status_code != 200:
+            logger.warning(f"Sunnah.com API answered {res.status_code} for {collection}:{hadith_number}")
+            return None
+        return parse_sunnah_hadith(res.json(), book_id, hadith_number)
+    except Exception as e:
+        logger.warning(f"Sunnah.com API request failed for {collection}:{hadith_number}: {e}")
+        return None
+
 EDITIONS_URL = "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions.json"
 _international_slugs: Optional[set] = None
 
@@ -704,7 +832,10 @@ async def list_books_with_availability() -> List[Dict[str, Any]]:
         item = dict(book)
         slug = CDN_BOOK_SLUGS.get(book["id"])
         # If the editions list cannot be read, assume available rather than hiding the option
-        item["international_available"] = bool(slug) and (slugs is None or slug in slugs)
+        in_reference_editions = bool(slug) and (slugs is None or slug in slugs)
+        in_sunnah_api = bool(sunnah_api_key()) and book["id"] in SUNNAH_COLLECTIONS
+        item["international_available"] = in_reference_editions or in_sunnah_api
+        item["sunnah_api"] = in_sunnah_api
         books.append(item)
     return books
 
@@ -722,16 +853,21 @@ async def fetch_hadith_international(book_id: int, hadith_number: str) -> Dict[s
         try:
             with open(cache_file, "r", encoding="utf-8") as f:
                 cached = json.load(f)
-                if cached.get("arabic_text"):
+                # Prefer Sunnah.com data over an older copy from the open editions once a key exists
+                stale = bool(sunnah_api_key()) and book_id in SUNNAH_COLLECTIONS and cached.get("source") != SUNNAH_SOURCE
+                if cached.get("arabic_text") and not stale:
                     return cached
         except Exception as e:
             logger.warning(f"Failed to read cache file {cache_file}: {e}")
 
-    data = None
-    try:
-        data = await fetch_from_hadith_cdn(book_id, clean_num)
-    except Exception as e:
-        logger.warning(f"International fetch failed for {book_id}_{clean_num}: {e}")
+    # The official Sunnah.com API is used whenever an API key is configured
+    data = await fetch_from_sunnah_api(book_id, clean_num)
+
+    if not data:
+        try:
+            data = await fetch_from_hadith_cdn(book_id, clean_num)
+        except Exception as e:
+            logger.warning(f"International fetch failed for {book_id}_{clean_num}: {e}")
 
     book_info = next((x for x in ISLAMIC_URDU_BOOKS if x["id"] == book_id), {
         "id": book_id, "name_ar": "كتاب حديث", "name_ur": "کتاب حدیث", "name_en": "Hadith Book"
@@ -756,7 +892,9 @@ async def fetch_hadith_international(book_id: int, hadith_number: str) -> Dict[s
         }
 
     data["numbering"] = "international"
-    data["source"] = INTERNATIONAL_SOURCE
+    data.setdefault("source", INTERNATIONAL_SOURCE)
+    if data["source"] != SUNNAH_SOURCE:
+        data["source"] = INTERNATIONAL_SOURCE
     data.pop("source_url", None)
     try:
         with open(cache_file, "w", encoding="utf-8") as f:
@@ -789,7 +927,8 @@ async def fetch_hadith(book_id: int, hadith_number: str, numbering: str = "site"
         try:
             with open(cache_file, "r", encoding="utf-8") as f:
                 cached_data = json.load(f)
-                if cached_data.get("arabic_text") and cached_data.get("source") == SITE_SOURCE:
+                if (cached_data.get("arabic_text") and cached_data.get("source") == SITE_SOURCE
+                        and cached_data.get("parser_version") == PARSER_VERSION):
                     return cached_data
         except Exception as e:
             logger.warning(f"Failed to read cache file {cache_file}: {e}")
@@ -809,6 +948,7 @@ async def fetch_hadith(book_id: int, hadith_number: str, numbering: str = "site"
                 if data.get("arabic_text"):
                     data["source"] = SITE_SOURCE
                     data["numbering"] = "site"
+                    data["parser_version"] = PARSER_VERSION
                     try:
                         with open(cache_file, "w", encoding="utf-8") as f:
                             json.dump(data, f, ensure_ascii=False, indent=2)

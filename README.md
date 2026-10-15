@@ -197,3 +197,20 @@ Contributions, feature suggestions, and pull requests are warmly welcomed! Pleas
 ## 📄 License
 
 Distributed under the **MIT License**. Copyright © 2026 **Muhammad Hamza**. See `LICENSE` for more information.
+
+
+## Sunnah.com data (optional)
+
+International-numbering lookups can use the official Sunnah.com API. Request an API key from
+Sunnah.com (see https://sunnah.stoplight.io/docs/api), then provide it as an environment variable:
+
+```bash
+# Windows PowerShell
+$env:SUNNAH_API_KEY = "your-key"
+# Linux / macOS
+export SUNNAH_API_KEY="your-key"
+```
+
+On Vercel, add `SUNNAH_API_KEY` under Project Settings -> Environment Variables. The key is read by the
+server only and is never sent to the browser. Without a key the app falls back to the open hadith
+reference editions.
