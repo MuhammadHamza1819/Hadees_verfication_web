@@ -219,6 +219,8 @@ async def import_and_verify(payload: dict):
     hadith_number = str(payload.get("hadith_number", "1"))
     
     hadith_data = await fetch_hadith(book_id, hadith_number, payload.get("numbering", "site"))
+    if hadith_data.get("is_fallback"):
+        raise HTTPException(status_code=503, detail="The hadith source is currently unavailable.")
     
     # Map extracted narrators to known narrator IDs or fallback
     narrator_ids = []
@@ -249,17 +251,16 @@ async def import_and_verify(payload: dict):
             1: "al_bukhari",
             2: "muslim_ibn_al_hajjaj",
             3: "abu_dawud",
-            4: "al_tirmidhi",
+            4: "ibn_majah",
             5: "al_nasai",
-            6: "ibn_majah",
+            6: "al_tirmidhi",
+            9: "al_tirmidhi",
+            24: "ahmad_ibn_hanbal",
             7: "malik_ibn_anas",
-            8: "al_bukhari",
-            9: "al_bukhari",
-            10: "al_bukhari",
-            11: "ahmad_ibn_hanbal"
+            26: "malik_ibn_anas",
         }
-        collector = collector_map.get(book_id, "al_bukhari")
-        if collector not in narrator_ids and narrator_ids[0] != collector:
+        collector = collector_map.get(book_id)
+        if collector and collector not in narrator_ids and narrator_ids[0] != collector:
             narrator_ids.insert(0, collector)
             
     formulas = ["haddathana"] * max(len(narrator_ids) - 1, 1)

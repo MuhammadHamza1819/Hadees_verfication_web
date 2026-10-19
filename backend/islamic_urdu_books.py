@@ -30,142 +30,58 @@ SITE_SOURCE = "islamicurdubooks"
 PARSER_VERSION = 2  # bump to ignore cached pages written by an older parser
 SITE_TIMEOUT = 8.0
 
+# Book ids follow IslamicUrduBooks.com's own list (checked against the site's home page).
 ISLAMIC_URDU_BOOKS = [
-    {
-        "id": 1,
-        "slug": "bukhari",
-        "name_ar": "صحيح البخاري",
-        "name_ur": "صحیح بخاری",
-        "name_en": "Sahih al-Bukhari",
-        "author_ar": "الإمام محمد بن إسماعيل البخاري",
-        "author_ur": "امام محمد بن اسماعیل بخاری رحمہ اللہ",
-        "author_en": "Imam Muhammad ibn Ismail al-Bukhari",
-        "total_hadiths": 7563
-    },
-    {
-        "id": 2,
-        "slug": "muslim",
-        "name_ar": "صحيح مسلم",
-        "name_ur": "صحیح مسلم",
-        "name_en": "Sahih Muslim",
-        "author_ar": "الإمام مسلم بن الحجاج النيسابوري",
-        "author_ur": "امام مسلم بن الحجاج نیشاپوری رحمہ اللہ",
-        "author_en": "Imam Muslim ibn al-Hajjaj",
-        "total_hadiths": 7563
-    },
-    {
-        "id": 3,
-        "slug": "abudawud",
-        "name_ar": "سنن أبي داود",
-        "name_ur": "سنن ابی داؤد",
-        "name_en": "Sunan Abi Dawud",
-        "author_ar": "الإمام أبو داود السجستاني",
-        "author_ur": "امام ابو داؤد سجستانی رحمہ اللہ",
-        "author_en": "Imam Abu Dawud al-Sijistani",
-        "total_hadiths": 5274
-    },
-    {
-        "id": 4,
-        "slug": "tirmidhi",
-        "name_ar": "جامع الترمذي",
-        "name_ur": "جامع ترمذی",
-        "name_en": "Jami' at-Tirmidhi",
-        "author_ar": "الإمام أبو عيسى محمد بن عيسى الترمذي",
-        "author_ur": "امام ابو عیسیٰ ترمذی رحمہ اللہ",
-        "author_en": "Imam Abu Isa al-Tirmidhi",
-        "total_hadiths": 3956
-    },
-    {
-        "id": 5,
-        "slug": "nasai",
-        "name_ar": "سنن النسائي",
-        "name_ur": "سنن نسائی",
-        "name_en": "Sunan an-Nasa'i",
-        "author_ar": "الإمام أحمد بن شعيب النسائي",
-        "author_ur": "امام احمد بن شعیب نسائی رحمہ اللہ",
-        "author_en": "Imam Ahmad ibn Shu'ayb an-Nasa'i",
-        "total_hadiths": 5758
-    },
-    {
-        "id": 6,
-        "slug": "ibnmajah",
-        "name_ar": "سنن ابن ماجه",
-        "name_ur": "سنن ابن ماجہ",
-        "name_en": "Sunan Ibn Majah",
-        "author_ar": "الإمام محمد بن يزيد بن ماجه القزويني",
-        "author_ur": "امام ابن ماجہ قزوینی رحمہ اللہ",
-        "author_en": "Imam Ibn Majah al-Qazwini",
-        "total_hadiths": 4341
-    },
-    {
-        "id": 7,
-        "slug": "malik",
-        "name_ar": "موطأ الإمام مالك",
-        "name_ur": "موطا امام مالک",
-        "name_en": "Muwatta Malik",
-        "author_ar": "الإمام مالك بن أنس الأصبحي",
-        "author_ur": "امام مالک بن انس رحمہ اللہ",
-        "author_en": "Imam Malik ibn Anas",
-        "total_hadiths": 1858
-    },
-    {
-        "id": 8,
-        "slug": "nawawi",
-        "name_ar": "الأربعون النووية",
-        "name_ur": "اربعین نووی",
-        "name_en": "40 Hadith of Imam Nawawi",
-        "author_ar": "الإمام يحيى بن شرف النووي",
-        "author_ur": "امام یحییٰ بن شرف نووی رحمہ اللہ",
-        "author_en": "Imam Yahya ibn Sharaf al-Nawawi",
-        "total_hadiths": 42
-    },
-    {
-        "id": 9,
-        "slug": "qudsi",
-        "name_ar": "الحديث القدسي",
-        "name_ur": "احادیث قدسیہ",
-        "name_en": "Hadith Qudsi",
-        "author_ar": "مجموعة الأحاديث القدسية",
-        "author_ur": "احادیث قدسیہ مجموعہ",
-        "author_en": "Sacred Prophetic Traditions (Qudsi)",
-        "total_hadiths": 40
-    },
-    {
-        "id": 10,
-        "slug": "mishkat",
-        "name_ar": "مشكاة المصابيح",
-        "name_ur": "مشکوٰۃ المصابیح",
-        "name_en": "Mishkat al-Masabih",
-        "author_ar": "الخطيب التبريزي",
-        "author_ur": "امام خطیب تبریزی رحمہ اللہ",
-        "author_en": "Al-Khatib al-Tabrizi",
-        "total_hadiths": 6294
-    },
-    {
-        "id": 11,
-        "slug": "ahmad",
-        "name_ar": "مسند أحمد بن حنبل",
-        "name_ur": "مسند احمد بن حنبل",
-        "name_en": "Musnad Ahmad",
-        "author_ar": "الإمام أحمد بن حنبل الشيباني",
-        "author_ur": "امام احمد بن حنبل رحمہ اللہ",
-        "author_en": "Imam Ahmad ibn Hanbal",
-        "total_hadiths": 27647
-    }
+    {"id": 1, "slug": "bukhari", "name_ar": "صحيح البخاري", "name_ur": "صحیح بخاری", "name_en": "Sahih al-Bukhari", "total_hadiths": 7563},
+    {"id": 2, "slug": "muslim", "name_ar": "صحيح مسلم", "name_ur": "صحیح مسلم", "name_en": "Sahih Muslim", "total_hadiths": 7563},
+    {"id": 3, "slug": "abudawud", "name_ar": "سنن أبي داود", "name_ur": "سنن ابی داؤد", "name_en": "Sunan Abi Dawud", "total_hadiths": 5274},
+    {"id": 4, "slug": "ibnmajah", "name_ar": "سنن ابن ماجه", "name_ur": "سنن ابن ماجہ", "name_en": "Sunan Ibn Majah", "total_hadiths": 4341},
+    {"id": 5, "slug": "nasai", "name_ar": "سنن النسائي", "name_ur": "سنن نسائی", "name_en": "Sunan an-Nasa'i", "total_hadiths": 5758},
+    {"id": 6, "slug": "tirmidhi", "name_ar": "جامع الترمذي", "name_ur": "جامع ترمذی", "name_en": "Jami' at-Tirmidhi", "total_hadiths": 3956},
+    {"id": 7, "slug": "malik_ibn_qasim", "name_ar": "موطأ الإمام مالك (رواية ابن القاسم)", "name_ur": "موطا امام مالک (روایت ابن القاسم)", "name_en": "Muwatta Imam Malik (Riwayat Ibn al-Qasim)"},
+    {"id": 8, "slug": "hammam", "name_ar": "صحيفة همام بن منبه", "name_ur": "صحیفہ ہمام بن منبہ", "name_en": "Sahifa Hammam ibn Munabbih"},
+    {"id": 9, "slug": "shamail", "name_ar": "شمائل الترمذي", "name_ur": "شمائل ترمذی", "name_en": "Shama'il al-Tirmidhi"},
+    {"id": 10, "slug": "silsila_sahiha", "name_ar": "سلسلة الأحاديث الصحيحة", "name_ur": "سلسلہ احادیث صحیحہ", "name_en": "Silsila Ahadith Sahiha"},
+    {"id": 11, "slug": "daif_majmua", "name_ar": "مجموعة الأحاديث الضعيفة", "name_ur": "مجموعہ ضعیف احادیث", "name_en": "Majmu'a Da'if Ahadith"},
+    {"id": 12, "slug": "mukhtasar_bukhari", "name_ar": "مختصر صحيح البخاري", "name_ur": "مختصر صحیح بخاری", "name_en": "Mukhtasar Sahih al-Bukhari"},
+    {"id": 13, "slug": "mukhtasar_muslim", "name_ar": "مختصر صحيح مسلم", "name_ur": "مختصر صحیح مسلم", "name_en": "Mukhtasar Sahih Muslim"},
+    {"id": 14, "slug": "bulugh", "name_ar": "بلوغ المرام", "name_ur": "بلوغ المرام", "name_en": "Bulugh al-Maram"},
+    {"id": 15, "slug": "abd_al_rahman_ibn_awf", "name_ar": "مسند عبد الرحمن بن عوف", "name_ur": "مسند عبدالرحمن بن عوف", "name_en": "Musnad Abd al-Rahman ibn Awf"},
+    {"id": 16, "slug": "ishaq_ibn_rahawayh", "name_ar": "مسند إسحاق بن راهويه", "name_ur": "مسند اسحاق بن راہویہ", "name_en": "Musnad Ishaq ibn Rahawayh"},
+    {"id": 17, "slug": "adab", "name_ar": "الأدب المفرد", "name_ur": "الادب المفرد", "name_en": "Al-Adab al-Mufrad"},
+    {"id": 18, "slug": "darimi", "name_ar": "سنن الدارمي", "name_ur": "سنن دارمی", "name_en": "Sunan al-Darimi"},
+    {"id": 19, "slug": "hisn", "name_ar": "مختصر حصن المسلم", "name_ur": "مختصر حصن المسلم", "name_en": "Mukhtasar Hisn al-Muslim"},
+    {"id": 20, "slug": "mujam_saghir", "name_ar": "المعجم الصغير للطبراني", "name_ur": "معجم صغیر للطبرانی", "name_en": "Al-Mu'jam al-Saghir (al-Tabarani)"},
+    {"id": 21, "slug": "abdullah_ibn_umar", "name_ar": "مسند عبد الله بن عمر", "name_ur": "مسند عبداللہ بن عمر", "name_en": "Musnad Abdullah ibn Umar"},
+    {"id": 22, "slug": "sahih_adab", "name_ar": "صحيح الأدب المفرد", "name_ur": "صحیح الادب المفرد", "name_en": "Sahih al-Adab al-Mufrad"},
+    {"id": 23, "slug": "mishkat", "name_ar": "مشكاة المصابيح", "name_ur": "مشکوٰۃ المصابیح", "name_en": "Mishkat al-Masabih"},
+    {"id": 24, "slug": "ahmad", "name_ar": "مسند أحمد", "name_ur": "مسند احمد", "name_en": "Musnad Ahmad"},
+    {"id": 25, "slug": "humaydi", "name_ar": "مسند الحميدي", "name_ur": "مسند حمیدی", "name_en": "Musnad al-Humaydi"},
+    {"id": 26, "slug": "malik", "name_ar": "موطأ الإمام مالك (رواية يحيى)", "name_ur": "موطا امام مالک (روایت یحییٰ)", "name_en": "Muwatta Imam Malik (Riwayat Yahya)"},
+    {"id": 27, "slug": "ibn_mubarak", "name_ar": "مسند عبد الله بن المبارك", "name_ur": "مسند عبداللہ بن مبارک", "name_en": "Musnad Abdullah ibn al-Mubarak"},
+    {"id": 28, "slug": "shihab", "name_ar": "مسند الشهاب", "name_ur": "مسند الشہاب", "name_en": "Musnad al-Shihab"},
+    {"id": 29, "slug": "umar_ibn_abd_al_aziz", "name_ar": "مسند عمر بن عبد العزيز", "name_ur": "مسند عمر بن عبدالعزیز", "name_en": "Musnad Umar ibn Abd al-Aziz"},
+    {"id": 30, "slug": "ibn_khuzaymah", "name_ar": "صحيح ابن خزيمة", "name_ur": "صحیح ابن خزیمہ", "name_en": "Sahih Ibn Khuzaymah"},
+    {"id": 31, "slug": "lulu", "name_ar": "اللؤلؤ والمرجان", "name_ur": "اللؤلؤ والمرجان", "name_en": "Al-Lu'lu' wal-Marjan"},
+    {"id": 32, "slug": "ibn_jarud", "name_ar": "المنتقى لابن الجارود", "name_ur": "المنتقیٰ ابن الجارود", "name_en": "Al-Muntaqa (Ibn al-Jarud)"},
+    {"id": 33, "slug": "ibn_abi_shaybah", "name_ar": "مصنف ابن أبي شيبة", "name_ur": "مصنف ابن ابی شیبہ", "name_en": "Musannaf Ibn Abi Shaybah"},
+    {"id": 34, "slug": "daraqutni", "name_ar": "سنن الدارقطني", "name_ur": "سنن دارقطنی", "name_en": "Sunan al-Daraqutni"},
+    {"id": 35, "slug": "fath_rabbani", "name_ar": "الفتح الرباني", "name_ur": "الفتح الربانی", "name_en": "Al-Fath al-Rabbani"},
+    {"id": 36, "slug": "saeed_ibn_mansur", "name_ar": "سنن سعيد بن منصور", "name_ur": "سنن سعید بن منصور", "name_en": "Sunan Sa'id ibn Mansur"},
+    {"id": 37, "slug": "ibn_hibban", "name_ar": "صحيح ابن حبان", "name_ur": "صحیح ابن حبان", "name_en": "Sahih Ibn Hibban"},
+    {"id": 38, "slug": "mustadrak", "name_ar": "المستدرك على الصحيحين", "name_ur": "المستدرک علی الصحیحین", "name_en": "Al-Mustadrak (al-Hakim)"},
+    {"id": 39, "slug": "shafii_musnad", "name_ar": "مسند الإمام الشافعي", "name_ur": "مسند امام شافعی", "name_en": "Musnad al-Shafi'i"},
+    {"id": 40, "slug": "shafii_sunan", "name_ar": "السنن المأثورة للشافعي", "name_ur": "السنن المأثورہ - امام شافعی", "name_en": "Al-Sunan al-Ma'thura (al-Shafi'i)"},
 ]
 
 CDN_BOOK_SLUGS = {
     1: "bukhari",
     2: "muslim",
     3: "abudawud",
-    4: "tirmidhi",
+    4: "ibnmajah",
     5: "nasai",
-    6: "ibnmajah",
-    7: "malik",
-    8: "nawawi",
-    9: "qudsi",
-    10: "mishkat",
-    11: "ahmad"
+    6: "tirmidhi",
+    26: "malik",
 }
 
 def normalize_hadith_number(val: Any) -> str:
@@ -523,6 +439,8 @@ def parse_hadith_page(html: str, book_id: int, hadith_number: str) -> Dict[str, 
     if chosen:
         tashkeel_div = chosen["block"]
         arabic_text = tashkeel_div.get_text(strip=True)
+        # Some books prefix the text with their own running number ("314 - ...", "187- ...")
+        arabic_text = re.sub(r"^\s*[\d٠-٩۰-۹]+\s*[-–.]\s*", "", arabic_text)
         for a in tashkeel_div.find_all("a", href=lambda h: h and "rawy-details.php" in h):
             rawy_name = a.get_text(strip=True)
             href = a.get("href", "")
@@ -711,13 +629,14 @@ SUNNAH_COLLECTIONS = {
     1: "bukhari",
     2: "muslim",
     3: "abudawud",
-    4: "tirmidhi",
+    4: "ibnmajah",
     5: "nasai",
-    6: "ibnmajah",
-    7: "malik",
-    8: "nawawi40",
-    9: "qudsi40",
-    10: "mishkat",
+    6: "tirmidhi",
+    9: "shamail",
+    14: "bulugh",
+    17: "adab",
+    23: "mishkat",
+    26: "malik",
 }
 
 
@@ -960,24 +879,10 @@ async def fetch_hadith(book_id: int, hadith_number: str, numbering: str = "site"
     except Exception as e:
         logger.warning(f"Live request to {url} failed: {e}")
 
-    # 3. Backups. Their numbering is not the site's numbering, so flag the result.
-    warning = "The primary source could not be reached, so this text comes from a backup source whose hadith numbering and chapters may differ."
-    if cache_key in OFFLINE_PRECACHED_HADITHS:
-        data = dict(OFFLINE_PRECACHED_HADITHS[cache_key])
-        data["source"] = "offline"
-        data["source_warning"] = warning
-        return data
+    # No backup text is served under the website's numbering: other sources number hadiths
+    # differently, so showing them here would present a different hadith for the same number.
 
-    try:
-        cdn_data = await fetch_from_hadith_cdn(book_id, clean_num)
-        if cdn_data and cdn_data.get("arabic_text") and not cdn_data.get("is_fallback"):
-            cdn_data["source"] = "cdn"
-            cdn_data["source_warning"] = warning
-            return cdn_data
-    except Exception as e:
-        logger.warning(f"CDN fetch attempt failed for {cache_key}: {e}")
-
-    # 4. Structured fallback (no real text available)
+    # 3. Nothing real to show: report that the source is unavailable instead of inventing text
     book_info = next((b for b in ISLAMIC_URDU_BOOKS if b["id"] == book_id), {
         "id": book_id, "name_ar": "كتاب حديث", "name_ur": "کتاب حدیث", "name_en": "Hadith Book"
     })
@@ -988,23 +893,14 @@ async def fetch_hadith(book_id: int, hadith_number: str, numbering: str = "site"
         "book_name_ur": book_info["name_ur"],
         "book_name_en": book_info["name_en"],
         "hadith_number": str(clean_num),
-        "chapter_ar": "باب الحديث النبوي",
-        "chapter_ur": "باب الحدیث النبوی",
-        "bab_ar": f"حديث رقم {clean_num}",
-        "bab_ur": f"حدیث نمبر {clean_num}",
-        "arabic_text": f"روى {book_info['name_ar']} برقم {clean_num}...",
-        "sanad_narrators": [
-            {"id": "1", "name": book_info["author_ar"], "standard_id": CDN_BOOK_SLUGS.get(book_id, "al_bukhari")},
-            {"id": "2", "name": "رسول الله ﷺ", "standard_id": "prophet_muhammad"}
-        ],
-        "urdu_translations": [
-            {
-                "translator": "مترجم کتب حدیث",
-                "text": f"{book_info['name_ur']} میں حدیث نمبر {clean_num} کا اندراج موجود ہے۔"
-            }
-        ],
-        "takhrij": f"مصدر: {url}",
+        "chapter_ar": "", "chapter_ur": "",
+        "bab_ar": "", "bab_ur": "",
+        "arabic_text": "",
+        "sanad_narrators": [],
+        "urdu_translations": [],
         "source_url": url,
+        "numbering": "site",
         "source": "none",
-        "is_fallback": True
+        "is_fallback": True,
+        "unavailable_reason": "source_unreachable",
     }
